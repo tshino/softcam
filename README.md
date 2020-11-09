@@ -28,7 +28,7 @@ for (;;)
 
 Following software is required.
 
-- Visual Studio 2019 (installed with Desktop development with C++)
+- Visual Studio 2019 (installed with Desktop development with C++ and Windows 10 SDK)
 
 The procedure is as follows.
 
