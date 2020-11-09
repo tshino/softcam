@@ -10,6 +10,14 @@ void Message(const std::string& message)
 }
 
 
+std::string ToHex(long x)
+{
+    char buff[128];
+    std::snprintf(buff, sizeof(buff), "%08lx\n", x);
+    return buff;
+}
+
+
 HMODULE LoadDLL(const std::string& path)
 {
     HMODULE hmod = LoadLibraryA(path.c_str());
@@ -55,9 +63,15 @@ int WINAPI WinMain(
     if (cmd == "register")
     {
         auto hmod = LoadDLL(path);
-        auto RegisterServer = GetProc<void()>(hmod, "DllRegisterServer");
+        auto RegisterServer = GetProc<HRESULT()>(hmod, "DllRegisterServer");
 
-        RegisterServer();
+        auto hr = RegisterServer();
+
+        if (FAILED(hr))
+        {
+            Message("Error: registration failed (" + ToHex(hr) + ")");
+            return 1;
+        }
 
         Message("softcam.dll has been successfully registered to the system");
         return 0;
@@ -65,9 +79,15 @@ int WINAPI WinMain(
     else if (cmd == "unregister")
     {
         auto hmod = LoadDLL(path);
-        auto UnregisterServer = GetProc<void()>(hmod, "DllUnregisterServer");
+        auto UnregisterServer = GetProc<HRESULT()>(hmod, "DllUnregisterServer");
 
-        UnregisterServer();
+        auto hr = UnregisterServer();
+
+        if (FAILED(hr))
+        {
+            Message("Error: registration failed (" + ToHex(hr) + ")");
+            return 1;
+        }
 
         Message("softcam.dll has been successfully unregistered from the system");
         return 0;

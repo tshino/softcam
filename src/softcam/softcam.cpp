@@ -79,26 +79,35 @@ STDAPI DllRegisterServer()
     {
         return hr;
     }
-    IFilterMapper2 *pFM2 = nullptr;
-    hr = CoCreateInstance(
-            CLSID_FilterMapper2, nullptr, CLSCTX_INPROC_SERVER,
-            IID_IFilterMapper2, (void**)&pFM2);
+    hr = CoInitialize(nullptr);
     if (FAILED(hr))
     {
         return hr;
     }
-    pFM2->UnregisterFilter(
-            &CLSID_VideoInputDeviceCategory,
-            0,
-            FILTER_CLASSID);
-    hr = pFM2->RegisterFilter(
-            FILTER_CLASSID,
-            FILTER_NAME,
-            0,
-            &CLSID_VideoInputDeviceCategory,
-            FILTER_NAME,
-            &s_reg_filter2);
-    pFM2->Release();
+    {
+        IFilterMapper2 *pFM2 = nullptr;
+        hr = CoCreateInstance(
+                CLSID_FilterMapper2, nullptr, CLSCTX_INPROC_SERVER,
+                IID_IFilterMapper2, (void**)&pFM2);
+        if (FAILED(hr))
+        {
+            return hr;
+        }
+        pFM2->UnregisterFilter(
+                &CLSID_VideoInputDeviceCategory,
+                0,
+                FILTER_CLASSID);
+        hr = pFM2->RegisterFilter(
+                FILTER_CLASSID,
+                FILTER_NAME,
+                0,
+                &CLSID_VideoInputDeviceCategory,
+                FILTER_NAME,
+                &s_reg_filter2);
+        pFM2->Release();
+    }
+    CoFreeUnusedLibraries();
+    CoUninitialize();
     return hr;
 }
 
@@ -109,19 +118,28 @@ STDAPI DllUnregisterServer()
     {
         return hr;
     }
-    IFilterMapper2 *pFM2 = nullptr;
-    hr = CoCreateInstance(
-            CLSID_FilterMapper2, nullptr, CLSCTX_INPROC_SERVER,
-            IID_IFilterMapper2, (void**)&pFM2);
+    hr = CoInitialize(nullptr);
     if (FAILED(hr))
     {
         return hr;
     }
-    hr = pFM2->UnregisterFilter(
-            &CLSID_VideoInputDeviceCategory,
-            0,
-            FILTER_CLASSID);
-    pFM2->Release();
+    {
+        IFilterMapper2 *pFM2 = nullptr;
+        hr = CoCreateInstance(
+                CLSID_FilterMapper2, nullptr, CLSCTX_INPROC_SERVER,
+                IID_IFilterMapper2, (void**)&pFM2);
+        if (FAILED(hr))
+        {
+            return hr;
+        }
+        hr = pFM2->UnregisterFilter(
+                &CLSID_VideoInputDeviceCategory,
+                FILTER_NAME,
+                FILTER_CLASSID);
+        pFM2->Release();
+    }
+    CoFreeUnusedLibraries();
+    CoUninitialize();
     return hr;
 }
 
