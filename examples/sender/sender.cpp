@@ -134,7 +134,7 @@ int main()
         std::printf("failed to create camera\n");
         return 1;
     }
-    std::printf("Ok. Softcam is now active.\n");
+    std::printf("Ok, Softcam is now active.\n");
 
     // Here, we wait for an application to connect to this camera.
     // You can comment out this line to start sending frames immediately
