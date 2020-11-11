@@ -28,6 +28,7 @@
   <ItemGroup>
     <ClCompile Include="FrameBufferTest.cpp" />
     <ClCompile Include="MiscTest.cpp" />
+    <ClCompile Include="SenderAPITest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
