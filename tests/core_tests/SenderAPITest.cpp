@@ -74,6 +74,12 @@ TEST(WaitForConnection, InvalidArgs)
 {
     bool ret = sender::WaitForConnection(nullptr);
     EXPECT_EQ( ret, false );
+
+    auto handle = sender::CreateCamera(320, 240);
+    sender::DeleteCamera(handle);
+
+    ret = sender::WaitForConnection(handle);
+    EXPECT_EQ( ret, false );
 }
 
 } //namespace
