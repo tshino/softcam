@@ -406,7 +406,7 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
     long lDataLen = pms->GetSize();
     ZeroMemory(pData, lDataLen);
     {
-        if (auto fb = getFrameBuffer())
+        if (auto fb = getParent()->getFrameBuffer())
         {
             fb->waitForNewFrame(m_frame_counter);
             fb->transferToDIB(pData, &m_frame_counter);
@@ -416,6 +416,13 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
                 // The sender has deactivated this stream and stopped sending frames.
                 // We release this stream and will wait a new stream to be available.
                 getParent()->releaseFrameBuffer();
+                // Save the last image for a placeholder.
+                const std::size_t size = m_height * ((m_width * 3 + 3) & ~3);
+                if (!m_screenshot)
+                {
+                    m_screenshot.reset(new uint8_t[size]);
+                }
+                std::memcpy(m_screenshot.get(), pData, size);
             }
         }
         else
@@ -423,6 +430,8 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
             // Waiting for a new stream.
             m_frame_counter = 0;
             Timer::sleep(0.100f);
+            const std::size_t size = m_height * ((m_width * 3 + 3) & ~3);
+            std::memcpy(pData, m_screenshot.get(), size);
         }
 
         CAutoLock lock(&m_critsec);
@@ -594,11 +603,6 @@ HRESULT SoftcamStream::GetNumberOfCapabilities(int *out_count, int *out_size)
 HRESULT SoftcamStream::GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc)
 {
     return getParent()->GetStreamCaps(index, out_pmt, out_scc);
-}
-
-FrameBuffer* SoftcamStream::getFrameBuffer()
-{
-    return getParent()->getFrameBuffer();
 }
 
 Softcam* SoftcamStream::getParent()

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <baseclasses/streams.h>
 #include "FrameBuffer.h"
 
@@ -87,12 +88,12 @@ private:
     const int   m_width;
     const int   m_height;
     uint64_t    m_frame_counter = 0;
+    std::unique_ptr<uint8_t[]>  m_screenshot;
 
     CCritSec m_critsec;
     CRefTime m_sample_time;
     int m_interval_time = 10;
 
-    FrameBuffer*    getFrameBuffer();
     Softcam*        getParent();
 };
 
