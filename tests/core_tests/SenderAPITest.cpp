@@ -17,6 +17,43 @@ namespace sender = softcam::sender;
             while (atomic_flag == last_value) { SLEEP(1); } \
         }()
 
+TEST(SendFrame, Basic)
+{
+    const float TIMEOUT = 1.0f;
+    const unsigned char COLOR_VALUE = 123;
+
+    auto handle = sender::CreateCamera(320, 240);
+    std::atomic<int> flag = 0;
+
+    std::thread th([&]
+    {
+        auto fb = sc::FrameBuffer::open();
+        ASSERT_TRUE( fb );
+
+        EXPECT_EQ( fb.frameCounter(), 0 );
+        flag = 1;
+
+        fb.waitForNewFrame(0, TIMEOUT);
+        EXPECT_EQ( fb.frameCounter(), 1 );
+
+        unsigned char image[320 * 240 * 3];
+        uint64_t frame_counter = 0;
+        fb.transferToDIB(image, &frame_counter);
+        EXPECT_EQ( image[0], COLOR_VALUE );
+        EXPECT_EQ( image[320 * 240 * 3 - 1], COLOR_VALUE );
+        EXPECT_EQ( frame_counter, 1 );
+    });
+
+    WAIT_FOR_FLAG_CHANGE(flag, 0);
+
+    unsigned char image[320 * 240 * 3] = {};
+    std::memset(image, COLOR_VALUE, sizeof(image));
+    sender::SendFrame(handle, image);
+
+    th.join();
+    sender::DeleteCamera(handle);
+}
+
 TEST(WaitForConnection, ShouldBlockUntilReceiverConnected)
 {
     auto handle = sender::CreateCamera(320, 240);
