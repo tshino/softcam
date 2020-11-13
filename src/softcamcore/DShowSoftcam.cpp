@@ -95,6 +95,12 @@ AM_MEDIA_TYPE* allocateMediaType()
     return amt;
 }
 
+std::size_t calcDIBSize(int width, int height)
+{
+    std::size_t stride = (static_cast<unsigned>(width) * 3 + 3) & ~3u;
+    return stride * static_cast<unsigned>(height);
+}
+
 void fillMediaType(AM_MEDIA_TYPE* amt, int width, int height, float framerate)
 {
     BYTE *pbFormat = amt->pbFormat;
@@ -117,13 +123,13 @@ void fillMediaType(AM_MEDIA_TYPE* amt, int width, int height, float framerate)
     pFormat->bmiHeader.biPlanes = 1;
     pFormat->bmiHeader.biBitCount = 24;
     pFormat->bmiHeader.biCompression = BI_RGB;
-    pFormat->bmiHeader.biSizeImage = DIBSIZE(pFormat->bmiHeader);
+    pFormat->bmiHeader.biSizeImage = static_cast<uint32_t>(calcDIBSize(width, height));
 
     amt->majortype = MEDIATYPE_Video;
     amt->subtype = MEDIASUBTYPE_RGB24;
     amt->bFixedSizeSamples = TRUE;
     amt->bTemporalCompression = FALSE;
-    amt->lSampleSize = DIBSIZE(pFormat->bmiHeader);
+    amt->lSampleSize = static_cast<uint32_t>(calcDIBSize(width, height));
     amt->formattype = FORMAT_VideoInfo;
     amt->pUnk = nullptr;
     amt->cbFormat = sizeof(VIDEOINFOHEADER);
@@ -416,8 +422,9 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
                 // The sender has deactivated this stream and stopped sending frames.
                 // We release this stream and will wait a new stream to be available.
                 getParent()->releaseFrameBuffer();
+
                 // Save the last image for a placeholder.
-                const std::size_t size = m_height * ((m_width * 3 + 3) & ~3);
+                const std::size_t size = calcDIBSize(m_width, m_height);
                 if (!m_screenshot)
                 {
                     m_screenshot.reset(new uint8_t[size]);
@@ -430,7 +437,8 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
             // Waiting for a new stream.
             m_frame_counter = 0;
             Timer::sleep(0.100f);
-            const std::size_t size = m_height * ((m_width * 3 + 3) & ~3);
+
+            const std::size_t size = calcDIBSize(m_width, m_height);
             std::memcpy(pData, m_screenshot.get(), size);
         }
 
