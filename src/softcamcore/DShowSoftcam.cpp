@@ -414,10 +414,10 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
     {
         if (auto fb = getParent()->getFrameBuffer())
         {
-            fb->waitForNewFrame(m_frame_counter);
+            bool active = fb->waitForNewFrame(m_frame_counter);
             fb->transferToDIB(pData, &m_frame_counter);
 
-            if (!fb->active())
+            if (!active)
             {
                 // The sender has deactivated this stream and stopped sending frames.
                 // We release this stream and will wait a new stream to be available.

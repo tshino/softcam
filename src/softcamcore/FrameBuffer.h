@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <memory>
 #include "Misc.h"
 
 
@@ -36,7 +37,7 @@ class FrameBuffer
     void            deactivate();
     void            write(const void* image_bits);
     void            transferToDIB(void* image_bits, uint64_t* out_frame_counter);
-    void            waitForNewFrame(uint64_t frame_counter, float time_out = 0.5f);
+    bool            waitForNewFrame(uint64_t frame_counter, float time_out = 0.5f);
 
     void            release();
 
@@ -45,6 +46,9 @@ class FrameBuffer
 
     mutable NamedMutex      m_mutex;
     SharedMemory            m_shmem;
+    std::shared_ptr<void>   m_watchdog_restarter;
+    uint8_t                 m_watchdog_last_value = 0;
+    Timer                   m_watchdog_timer;
 
     explicit FrameBuffer(const char* mutex_name) : m_mutex(mutex_name) {}
 

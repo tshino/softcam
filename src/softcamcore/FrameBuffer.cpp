@@ -2,6 +2,8 @@
 
 #include <windows.h>
 #include <mutex> // lock_guard
+#include <atomic>
+#include <thread>
 
 
 namespace softcam {
@@ -9,6 +11,8 @@ namespace softcam {
 
 const char NamedMutexName[] = "DirectShow Softcam/NamedMutex";
 const char SharedMemoryName[] = "DirectShow Softcam/SharedMemory";
+const float WATCHDOG_RESTART_INTERVAL = 0.1f;
+const float WATCHDOG_TIMEOUT = 1.0f;
 
 
 struct FrameBuffer::Header
@@ -19,7 +23,8 @@ struct FrameBuffer::Header
     float       m_framerate;
     uint8_t     m_is_active;
     uint8_t     m_connected;
-    uint16_t    m_unused_field;
+    uint8_t     m_watchdog_restarter;
+    uint8_t     m_unused_field;
     uint64_t    m_frame_counter;
 
     uint8_t*    imageData();
@@ -63,6 +68,32 @@ FrameBuffer FrameBuffer::create(
         frame->m_is_active = 1;
         frame->m_connected = 0;
         frame->m_frame_counter = 0;
+
+        struct WatchdogRestarter
+        {
+            std::atomic<bool>   m_quit = false;
+            std::thread         m_thread;
+            ~WatchdogRestarter()
+            {
+                m_quit = true;
+                m_thread.join();
+            }
+        };
+        auto restarter = std::make_shared<WatchdogRestarter>();
+        auto ptr = restarter.get();
+        auto mutex = fb.m_mutex;
+        std::thread clock([ptr,mutex,frame]() mutable {
+            while (!ptr->m_quit)
+            {
+                Timer::sleep(WATCHDOG_RESTART_INTERVAL);
+                {
+                    std::lock_guard<NamedMutex> lock(mutex);
+                    frame->m_watchdog_restarter += 1;
+                }
+            }
+        });
+        restarter->m_thread.swap(clock);
+        fb.m_watchdog_restarter = restarter;
     }
     return fb;
 }
@@ -97,6 +128,7 @@ FrameBuffer FrameBuffer::open()
             return fb;
         }
 
+        fb.m_watchdog_last_value = frame->m_watchdog_restarter;
         frame->m_connected = 1;
     }
 
@@ -209,11 +241,31 @@ void FrameBuffer::transferToDIB(void* image_bits, uint64_t* out_frame_counter)
     }
 }
 
-void FrameBuffer::waitForNewFrame(uint64_t frame_counter, float time_out)
+bool FrameBuffer::waitForNewFrame(uint64_t frame_counter, float time_out)
 {
-    if (!m_shmem) return;
+    if (!m_shmem) return false;
+    auto is_active = [this]()
+    {
+        std::lock_guard<NamedMutex> lock(m_mutex);
+        auto frame = header();
+        if (!frame->m_is_active)
+        {
+            return false;
+        }
+        uint8_t value = frame->m_watchdog_restarter;
+        if (m_watchdog_last_value != value)
+        {
+            m_watchdog_last_value = value;
+            m_watchdog_timer.reset();
+        }
+        if (WATCHDOG_TIMEOUT < m_watchdog_timer.get())
+        {
+            return false;
+        }
+        return true;
+    };
     Timer timer;
-    while (active() && frameCounter() <= frame_counter)
+    while (is_active() && frameCounter() <= frame_counter)
     {
         Timer::sleep(0.001f);
         if (0.0f < time_out && time_out <= timer.get())
@@ -221,10 +273,12 @@ void FrameBuffer::waitForNewFrame(uint64_t frame_counter, float time_out)
             break;
         }
     }
+    return is_active();
 }
 
 void FrameBuffer::release()
 {
+    m_watchdog_restarter.reset();
     m_shmem = SharedMemory{};
 }
 
