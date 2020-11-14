@@ -167,7 +167,8 @@ TEST(FrameBuffer, WaitForNewFrameTimesOut) {
 
     std::atomic<int> pos = 0;
     std::thread th([&]{
-        fb.waitForNewFrame(0, TIMEOUT_TIME);
+        bool ret = fb.waitForNewFrame(0, TIMEOUT_TIME);
+        EXPECT_EQ( ret, true );
         pos = 1;
     });
 
@@ -185,7 +186,8 @@ TEST(FrameBuffer, WaitForNewFrameStopsAfterNewFrameArrived) {
     auto frame_count = fb.frameCounter();
     std::atomic<int> pos = 0;
     std::thread th([&]{
-        fb.waitForNewFrame(frame_count, TIMEOUT_TIME);
+        bool ret = fb.waitForNewFrame(frame_count, TIMEOUT_TIME);
+        EXPECT_EQ( ret, true );
         pos = 1;
     });
 
@@ -206,7 +208,8 @@ TEST(FrameBuffer, WaitForNewFrameStopsIfDeactivated) {
     auto frame_count = fb.frameCounter();
     std::atomic<int> pos = 0;
     std::thread th([&]{
-        fb.waitForNewFrame(frame_count, TIMEOUT_TIME);
+        bool ret = fb.waitForNewFrame(frame_count, TIMEOUT_TIME);
+        EXPECT_EQ( ret, false );
         pos = 1;
     });
 
@@ -216,6 +219,31 @@ TEST(FrameBuffer, WaitForNewFrameStopsIfDeactivated) {
     std::vector<uint8_t> image(320 * 240 * 3, 255);
     fb.deactivate();
     sc::Timer::sleep(0.1f);
+    EXPECT_EQ( pos, 1 );
+    th.join();
+}
+
+TEST(FrameBuffer, WaitForNewFrameStopsWhenWatchdogTimeouts) {
+    const float TIMEOUT_TIME = 2.0f;
+    auto fb = sc::FrameBuffer::create(320, 240, 60);
+
+    std::atomic<int> pos = 0;
+    std::thread th([&]{
+        auto receiver = sc::FrameBuffer::open();
+        auto frame_count = receiver.frameCounter();
+        bool ret = receiver.waitForNewFrame(frame_count, TIMEOUT_TIME);
+        EXPECT_EQ( ret, false );
+        pos = 1;
+    });
+
+    sc::Timer::sleep(0.1f);
+    EXPECT_EQ( pos, 0 );
+
+    fb.release();
+    sc::Timer::sleep(0.1f);
+    EXPECT_EQ( pos, 0 );
+
+    sc::Timer::sleep(1.1f);
     EXPECT_EQ( pos, 1 );
     th.join();
 }
