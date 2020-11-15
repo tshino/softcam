@@ -224,8 +224,7 @@ TEST(FrameBuffer, WaitForNewFrameStopsIfDeactivated) {
 }
 
 TEST(FrameBuffer, WaitForNewFrameStopsWhenWatchdogTimeouts) {
-    const float WATCHDOG_TIMEOUT = 1.0f;
-    const float TEST_TIMEOUT = WATCHDOG_TIMEOUT + 1.0f;
+    const float TEST_TIMEOUT = sc::FrameBuffer::WATCHDOG_TIMEOUT + 1.0f;
     auto fb = sc::FrameBuffer::create(320, 240, 60);
 
     std::atomic<int> pos = 0;
@@ -244,7 +243,7 @@ TEST(FrameBuffer, WaitForNewFrameStopsWhenWatchdogTimeouts) {
     sc::Timer::sleep(0.1f);
     EXPECT_EQ( pos, 0 );
 
-    sc::Timer::sleep(WATCHDOG_TIMEOUT + 0.1f);
+    sc::Timer::sleep(sc::FrameBuffer::WATCHDOG_TIMEOUT + 0.1f);
     EXPECT_EQ( pos, 1 );
     th.join();
 }

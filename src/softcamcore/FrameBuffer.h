@@ -2,8 +2,8 @@
 
 #include <cstdint>
 #include <cstddef>
-#include <memory>
 #include "Misc.h"
+#include "Watchdog.h"
 
 
 namespace softcam {
@@ -41,14 +41,16 @@ class FrameBuffer
 
     void            release();
 
+    static constexpr float WATCHDOG_HEARTBEAT_INTERVAL = 0.02f;
+    static constexpr float WATCHDOG_MONITOR_INTERVAL = 0.02f;
+    static constexpr float WATCHDOG_TIMEOUT = 0.5f;
+
  private:
     struct Header;
 
     mutable NamedMutex      m_mutex;
     SharedMemory            m_shmem;
-    std::shared_ptr<void>   m_watchdog_restarter;
-    uint8_t                 m_watchdog_last_value = 0;
-    Timer                   m_watchdog_timer;
+    Watchdog                m_watchdog;
 
     explicit FrameBuffer(const char* mutex_name) : m_mutex(mutex_name) {}
 
