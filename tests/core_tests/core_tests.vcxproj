@@ -29,6 +29,7 @@
     <ClCompile Include="FrameBufferTest.cpp" />
     <ClCompile Include="MiscTest.cpp" />
     <ClCompile Include="SenderAPITest.cpp" />
+    <ClCompile Include="WatchdogTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -81,12 +81,14 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Misc.h" />
     <ClInclude Include="SenderAPI.h" />
+    <ClInclude Include="Watchdog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DShowSoftcam.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Misc.cpp" />
     <ClCompile Include="SenderAPI.cpp" />
+    <ClCompile Include="Watchdog.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
