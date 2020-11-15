@@ -205,26 +205,6 @@ void FrameBuffer::transferToDIB(void* image_bits, uint64_t* out_frame_counter)
             dest += 3 * w + gap;
         }
         *out_frame_counter = frame->m_frame_counter;
-
-        if (!frame->m_is_active)
-        {
-            // Darken the image to indicate that the source is inactive
-            dest = (std::uint8_t*)image_bits;
-            for (int y = 0; y < h; y++)
-            {
-                for (int x = 0; x < w; x++)
-                {
-                    std::uint8_t b = dest[0];
-                    std::uint8_t g = dest[1];
-                    std::uint8_t r = dest[2];
-                    dest[0] = b / 4;
-                    dest[1] = g / 4;
-                    dest[2] = r / 4;
-                    dest += 3;
-                }
-                dest += gap;
-            }
-        }
     }
 }
 

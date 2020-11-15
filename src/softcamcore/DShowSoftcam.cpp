@@ -429,6 +429,13 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
                 {
                     m_screenshot.reset(new uint8_t[size]);
                 }
+                {
+                    // Darken the image to indicate that the source is inactive.
+                    for (std::size_t i = 0; i < size; i++)
+                    {
+                        pData[i] = pData[i] / 4;
+                    }
+                }
                 std::memcpy(m_screenshot.get(), pData, size);
             }
         }
