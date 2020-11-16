@@ -145,6 +145,51 @@ TEST(FrameBuffer, WriteIncreasesFrameCounter) {
     EXPECT_EQ( fb.frameCounter(), 2 );
 }
 
+TEST(FrameBuffer, WriteAndRead) {
+    const auto TestPatternR = [](int x, int y) { return (uint8_t)((x + y) & 0xff); };
+    const auto TestPatternG = [](int x, int y) { return (uint8_t)((x - y) & 0xff); };
+    const auto TestPatternB = [](int x, int y) { return (uint8_t)((x * y) & 0xff); };
+
+    auto fb = sc::FrameBuffer::create(320, 240, 60);
+
+    std::vector<uint8_t> src(320 * 240 * 3, 111);
+    std::vector<uint8_t> dest(320 * 240 * 3, 222);
+    for (int y = 0; y < 240; y++)
+    {
+        for (int x = 0; x < 320; x++)
+        {
+            // Top to Bottom, BGR order
+            std::size_t addr = 3 * (x + y * 320);
+            src[addr + 0] = TestPatternB(x, y);
+            src[addr + 1] = TestPatternG(x, y);
+            src[addr + 2] = TestPatternR(x, y);
+        }
+    }
+
+    fb.write(src.data());
+
+    uint64_t frame_counter = 0;
+    fb.transferToDIB(dest.data(), &frame_counter);
+    EXPECT_EQ( frame_counter, 1 );
+
+    int error_count = 0;
+    for (int y = 0; y < 240; y++)
+    {
+        for (int x = 0; x < 320; x++)
+        {
+            // Bottom to Top, BGR order
+            std::size_t addr = 3 * (x + (239 - y) * 320);
+            if (dest[addr + 0] != TestPatternB(x, y) ||
+                dest[addr + 1] != TestPatternG(x, y) ||
+                dest[addr + 2] != TestPatternR(x, y))
+            {
+                error_count += 1;
+            }
+        }
+    }
+    EXPECT_EQ( error_count, 0 );
+}
+
 TEST(FrameBuffer, DeactivateTurnsActiveFlagOff) {
     auto sender = sc::FrameBuffer::create(320, 240, 60);
     auto receiver = sc::FrameBuffer::open();
