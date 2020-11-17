@@ -17,6 +17,19 @@ namespace sender = softcam::sender;
             while (atomic_flag == last_value) { SLEEP(1); } \
         }()
 
+TEST(CreateCamera, Basic)
+{
+    {
+        auto handle = sender::CreateCamera(320, 240, 60);
+        EXPECT_NE( handle, nullptr );
+        EXPECT_NO_THROW({ sender::DeleteCamera(handle); });
+    }{
+        auto handle = sender::CreateCamera(1920, 1080, 30);
+        EXPECT_NE( handle, nullptr );
+        EXPECT_NO_THROW({ sender::DeleteCamera(handle); });
+    }
+}
+
 TEST(SendFrame, Basic)
 {
     const float TIMEOUT = 1.0f;

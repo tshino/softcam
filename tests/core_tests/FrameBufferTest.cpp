@@ -246,7 +246,7 @@ TEST(FrameBuffer, WaitForNewFrameStopsAfterNewFrameArrived) {
     th.join();
 }
 
-TEST(FrameBuffer, WaitForNewFrameStopsIfDeactivated) {
+TEST(FrameBuffer, WaitForNewFrameStopsWhenDeactivated) {
     const float TIMEOUT_TIME = 2.0f;
     auto fb = sc::FrameBuffer::create(320, 240, 60);
 
@@ -293,7 +293,7 @@ TEST(FrameBuffer, WaitForNewFrameStopsWhenWatchdogTimeouts) {
     th.join();
 }
 
-TEST(FrameBuffer, ReleaseInvalidateItself) {
+TEST(FrameBuffer, ReleaseInvalidatesItself) {
     auto fb = sc::FrameBuffer::create(320, 240, 60);
     fb.release();
 
