@@ -14,12 +14,12 @@ This DLL provides Softcam Sender API too. Using this API, your application can c
 Your code will look like this:
 
 ```
-auto camera = scCreateCamera(320, 240, 60);
+scCamera cam = scCreateCamera(320, 240, 60);
 for (;;)
 {
     uint8_t image[320 * 240 * 3];
     DrawSomething(image);
-    scSendFrame(camera, image);
+    scSendFrame(cam, image);
 }
 ```
 .
