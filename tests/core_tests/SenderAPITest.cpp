@@ -21,12 +21,72 @@ TEST(CreateCamera, Basic)
 {
     {
         auto handle = sender::CreateCamera(320, 240, 60);
-        EXPECT_NE( handle, nullptr );
+        EXPECT_TRUE( handle );
+
+        auto fb = sc::FrameBuffer::open();
+        EXPECT_EQ( fb.width(), 320 );
+        EXPECT_EQ( fb.height(), 240 );
+        EXPECT_EQ( fb.framerate(), 60 );
+
         EXPECT_NO_THROW({ sender::DeleteCamera(handle); });
     }{
         auto handle = sender::CreateCamera(1920, 1080, 30);
-        EXPECT_NE( handle, nullptr );
+        EXPECT_TRUE( handle );
+
+        auto fb = sc::FrameBuffer::open();
+        EXPECT_EQ( fb.width(), 1920 );
+        EXPECT_EQ( fb.height(), 1080 );
+        EXPECT_EQ( fb.framerate(), 30 );
+
         EXPECT_NO_THROW({ sender::DeleteCamera(handle); });
+    }
+}
+
+TEST(CreateCamera, FramerateIsOptional) {
+    auto handle = sender::CreateCamera(320, 240);
+    EXPECT_TRUE( handle );
+
+    auto fb = sc::FrameBuffer::open();
+    EXPECT_EQ( fb.framerate(), 60 );
+
+    sender::DeleteCamera(handle);
+}
+
+TEST(CreateCamera, ZeroMeansUnlimitedVariableFramerate) {
+    auto handle = sender::CreateCamera(320, 240, 0.0f);
+    EXPECT_TRUE( handle );
+
+    auto fb = sc::FrameBuffer::open();
+    EXPECT_EQ( fb.framerate(), 0.0f );
+
+    sender::DeleteCamera(handle);
+}
+
+TEST(CreateCamera, InvalidArgs) {
+    {
+        auto handle = sender::CreateCamera(0, 240, 60);
+        EXPECT_FALSE( handle );
+        sender::DeleteCamera(handle);
+    }{
+        auto handle = sender::CreateCamera(320, 0, 60);
+        EXPECT_FALSE( handle );
+        sender::DeleteCamera(handle);
+    }{
+        auto handle = sender::CreateCamera(0, 0, 60);
+        EXPECT_FALSE( handle );
+        sender::DeleteCamera(handle);
+    }{
+        auto handle = sender::CreateCamera(-320, 240, 60);
+        EXPECT_FALSE( handle );
+        sender::DeleteCamera(handle);
+    }{
+        auto handle = sender::CreateCamera(320, -240, 60);
+        EXPECT_FALSE( handle );
+        sender::DeleteCamera(handle);
+    }{
+        auto handle = sender::CreateCamera(320, 240, -60);
+        EXPECT_FALSE( handle );
+        sender::DeleteCamera(handle);
     }
 }
 
