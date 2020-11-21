@@ -17,7 +17,7 @@ namespace sender = softcam::sender;
             while (atomic_flag == last_value) { SLEEP(1); } \
         }()
 
-TEST(CreateCamera, Basic)
+TEST(SenderCreateCamera, Basic)
 {
     {
         auto handle = sender::CreateCamera(320, 240, 60);
@@ -42,7 +42,7 @@ TEST(CreateCamera, Basic)
     }
 }
 
-TEST(CreateCamera, FramerateIsOptional) {
+TEST(SenderCreateCamera, FramerateIsOptional) {
     auto handle = sender::CreateCamera(320, 240);
     EXPECT_TRUE( handle );
 
@@ -52,7 +52,7 @@ TEST(CreateCamera, FramerateIsOptional) {
     sender::DeleteCamera(handle);
 }
 
-TEST(CreateCamera, ZeroMeansUnlimitedVariableFramerate) {
+TEST(SenderCreateCamera, ZeroMeansUnlimitedVariableFramerate) {
     auto handle = sender::CreateCamera(320, 240, 0.0f);
     EXPECT_TRUE( handle );
 
@@ -62,7 +62,7 @@ TEST(CreateCamera, ZeroMeansUnlimitedVariableFramerate) {
     sender::DeleteCamera(handle);
 }
 
-TEST(CreateCamera, InvalidArgs) {
+TEST(SenderCreateCamera, InvalidArgs) {
     {
         auto handle = sender::CreateCamera(0, 240, 60);
         EXPECT_FALSE( handle );
@@ -90,7 +90,7 @@ TEST(CreateCamera, InvalidArgs) {
     }
 }
 
-TEST(SendFrame, Basic)
+TEST(SenderSendFrame, Basic)
 {
     const float TIMEOUT = 1.0f;
     const unsigned char COLOR_VALUE = 123;
@@ -127,7 +127,7 @@ TEST(SendFrame, Basic)
     sender::DeleteCamera(handle);
 }
 
-TEST(WaitForConnection, ShouldBlockUntilReceiverConnected)
+TEST(SenderWaitForConnection, ShouldBlockUntilReceiverConnected)
 {
     auto handle = sender::CreateCamera(320, 240);
     std::atomic<int> flag = 0;
@@ -154,7 +154,7 @@ TEST(WaitForConnection, ShouldBlockUntilReceiverConnected)
     sender::DeleteCamera(handle);
 }
 
-TEST(WaitForConnection, ShouldTimeout)
+TEST(SenderWaitForConnection, ShouldTimeout)
 {
     const float TIMEOUT = 0.5f;
 
@@ -180,7 +180,7 @@ TEST(WaitForConnection, ShouldTimeout)
     sender::DeleteCamera(handle);
 }
 
-TEST(WaitForConnection, InvalidArgs)
+TEST(SenderWaitForConnection, InvalidArgs)
 {
     bool ret = sender::WaitForConnection(nullptr);
     EXPECT_EQ( ret, false );
