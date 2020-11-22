@@ -1,13 +1,18 @@
 #include <softcamcore/Misc.h>
 #include <gtest/gtest.h>
 
+#include <cstring>
+
 
 namespace {
 namespace sc = softcam;
 
 const char SHMEM_NAME[] = "shmemtest";
+const char MUTEX_NAME[] = "shmemtest_mutex";
 const char ANOTHER_NAME[] = "shmemtest2";
 const unsigned long SHMEM_SIZE = 888;
+const char SOME_DATA[] = "Hello, world!";
+const char ANOTHER_DATA[] = "12345";
 
 
 TEST(Timer, Basic1) {
@@ -68,6 +73,25 @@ TEST(SharedMemory, Basic2) {
     EXPECT_NE( view1.get(), view2.get() );
     EXPECT_GE( view1.size(), SHMEM_SIZE );
     EXPECT_GE( view2.size(), SHMEM_SIZE );
+}
+
+TEST(SharedMemory, Basic3) {
+    auto view1 = sc::SharedMemory::create(SHMEM_NAME, SHMEM_SIZE);
+    ASSERT_TRUE( view1 );
+    std::memcpy(view1.get(), SOME_DATA, sizeof(SOME_DATA));
+
+    auto view2 = sc::SharedMemory::open(SHMEM_NAME);
+    ASSERT_TRUE( view2 );
+    EXPECT_EQ( std::memcmp(view2.get(), SOME_DATA, sizeof(SOME_DATA)), 0 );
+
+    auto mutex = sc::NamedMutex(MUTEX_NAME);
+    mutex.lock();
+    std::memcpy(view1.get(), ANOTHER_DATA, sizeof(ANOTHER_DATA));
+    mutex.unlock();
+
+    mutex.lock();
+    EXPECT_EQ( std::memcmp(view2.get(), ANOTHER_DATA, sizeof(ANOTHER_DATA)), 0 );
+    mutex.unlock();
 }
 
 TEST(SharedMemory, InvalidArgs) {
