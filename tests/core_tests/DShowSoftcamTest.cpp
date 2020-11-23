@@ -20,7 +20,7 @@ TEST(Softcam, CreateInstance)
     EXPECT_EQ( hr, S_OK );
     ASSERT_NE( ret, nullptr );
 
-    static_cast<sc::Softcam*>(ret)->Release();
+    delete static_cast<sc::Softcam*>(ret);
 }
 
 TEST(Softcam, QueryInterface)
@@ -28,6 +28,7 @@ TEST(Softcam, QueryInterface)
     HRESULT hr = 555;
     sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
     ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
 
     {
         void *ptr = nullptr;
@@ -49,17 +50,36 @@ TEST(Softcam, QueryInterface)
     softcam->Release();
 }
 
-TEST(Softcam, NoServer)
+TEST(Softcam, AttributesNoServer)
 {
     HRESULT hr = 555;
     sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
     ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
 
     EXPECT_EQ( softcam->getFrameBuffer(), nullptr );
     EXPECT_EQ( softcam->valid(), false );
     EXPECT_EQ( softcam->width(), 0 );
     EXPECT_EQ( softcam->height(), 0 );
     EXPECT_EQ( softcam->framerate(), 0.0f );
+
+    softcam->Release();
+}
+
+TEST(Softcam, AttributesNormal)
+{
+    auto fb = sc::FrameBuffer::create(320, 240, 60);
+
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    EXPECT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->valid(), true );
+    EXPECT_EQ( softcam->width(), 320 );
+    EXPECT_EQ( softcam->height(), 240 );
+    EXPECT_EQ( softcam->framerate(), 60.0f );
 
     softcam->Release();
 }
