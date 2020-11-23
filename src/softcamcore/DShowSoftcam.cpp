@@ -341,6 +341,7 @@ FrameBuffer* Softcam::getFrameBuffer()
     {
         auto fb = FrameBuffer::open();
         if (fb &&
+            fb.active() &&
             fb.width() == m_width &&
             fb.height() == m_height)
         {

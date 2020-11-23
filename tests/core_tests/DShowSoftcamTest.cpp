@@ -1,10 +1,17 @@
 #include <softcamcore/DShowSoftcam.h>
 #include <gtest/gtest.h>
 
+#include <memory>
+
 
 namespace {
 namespace sc = softcam;
 
+
+std::unique_ptr<sc::FrameBuffer> createFrameBufer(int width, int height, float framerate)
+{
+    return std::make_unique<sc::FrameBuffer>(sc::FrameBuffer::create(width, height, framerate));
+}
 
 // This is a dummy GUID representing nothing.
 // {12A54BBA-9F51-41B0-B331-0C3B08D1269F}
@@ -68,7 +75,7 @@ TEST(Softcam, AttributesNoServer)
 
 TEST(Softcam, AttributesNormal)
 {
-    auto fb = sc::FrameBuffer::create(320, 240, 60);
+    auto fb = createFrameBufer(320, 240, 60);
 
     HRESULT hr = 555;
     sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
@@ -76,6 +83,77 @@ TEST(Softcam, AttributesNormal)
     softcam->AddRef();
 
     EXPECT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->valid(), true );
+    EXPECT_EQ( softcam->width(), 320 );
+    EXPECT_EQ( softcam->height(), 240 );
+    EXPECT_EQ( softcam->framerate(), 60.0f );
+
+    softcam->Release();
+}
+
+TEST(Softcam, AttributesRebootingReceiver)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    EXPECT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->valid(), true );
+    EXPECT_EQ( softcam->width(), 320 );
+    EXPECT_EQ( softcam->height(), 240 );
+    EXPECT_EQ( softcam->framerate(), 60.0f );
+
+    softcam->Release();
+
+    softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    EXPECT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->valid(), true );
+    EXPECT_EQ( softcam->width(), 320 );
+    EXPECT_EQ( softcam->height(), 240 );
+    EXPECT_EQ( softcam->framerate(), 60.0f );
+
+    softcam->Release();
+}
+
+TEST(Softcam, AttributesRebootingSender)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    ASSERT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->getFrameBuffer()->active(), true );
+    EXPECT_EQ( softcam->valid(), true );
+    EXPECT_EQ( softcam->width(), 320 );
+    EXPECT_EQ( softcam->height(), 240 );
+    EXPECT_EQ( softcam->framerate(), 60.0f );
+
+    fb->deactivate();
+
+    ASSERT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->getFrameBuffer()->active(), false );
+
+    softcam->releaseFrameBuffer();
+
+    EXPECT_EQ( softcam->getFrameBuffer(), nullptr );
+
+    fb.reset();
+
+    EXPECT_EQ( softcam->getFrameBuffer(), nullptr );
+
+    fb = createFrameBufer(320, 240, 60);
+
+    ASSERT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->getFrameBuffer()->active(), true );
     EXPECT_EQ( softcam->valid(), true );
     EXPECT_EQ( softcam->width(), 320 );
     EXPECT_EQ( softcam->height(), 240 );
