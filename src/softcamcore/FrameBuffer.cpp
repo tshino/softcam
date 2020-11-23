@@ -122,6 +122,16 @@ FrameBuffer FrameBuffer::open()
     return fb;
 }
 
+FrameBuffer&
+FrameBuffer::operator =(const FrameBuffer& fb)
+{
+    m_watchdog = {};
+    m_shmem = {};
+    m_shmem = fb.m_shmem;
+    m_watchdog = fb.m_watchdog;
+    return *this;
+}
+
 void* FrameBuffer::handle() const
 {
     return const_cast<void*>(m_shmem.get());

@@ -24,6 +24,7 @@ class FrameBuffer
                         float           framerate = 0.0f);
     static FrameBuffer open();
 
+    FrameBuffer& operator =(const FrameBuffer&);
     explicit operator bool() const { return handle() != nullptr; }
 
     void*           handle() const;

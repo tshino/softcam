@@ -133,6 +133,29 @@ TEST(FrameBuffer, MultipleOpenSucceeds) {
     EXPECT_EQ( sender.connected(), true );
 }
 
+TEST(FrameBuffer, CanCopyAssign)
+{
+    {
+        auto fb1 = sc::FrameBuffer::create(320, 240, 60);
+        EXPECT_NO_THROW({
+            auto fb2 = fb1;
+        });
+    }
+    {
+        auto fb1 = sc::FrameBuffer::create(320, 240, 60);
+        EXPECT_NO_THROW({
+            fb1 = sc::FrameBuffer::create(320, 240, 60);
+        });
+    }
+    {
+        auto fb1 = sc::FrameBuffer::create(320, 240, 60);
+        auto fb2 = sc::FrameBuffer::open();
+        EXPECT_NO_THROW({
+            fb2 = sc::FrameBuffer::open();
+        });
+    }
+}
+
 TEST(FrameBuffer, WriteIncreasesFrameCounter) {
     auto fb = sc::FrameBuffer::create(320, 240, 60);
     EXPECT_EQ( fb.frameCounter(), 0 );
