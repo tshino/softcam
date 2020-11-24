@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 
 #include <cstring>
+#include <thread>
+#include <atomic>
 
 
 namespace {
@@ -53,6 +55,39 @@ TEST(Timer, Reset) {
     EXPECT_LT( t2, t1 );
 }
 
+TEST(NamedMutex, Basic)
+{
+    std::atomic<int> signal = 0;
+
+    std::thread th1([&]
+    {
+        sc::NamedMutex mutex(MUTEX_NAME);
+        mutex.lock();
+        signal = 1;
+        while (signal < 3) sc::Timer::sleep(0.01f);
+        mutex.unlock();
+    });
+    std::thread th2([&]
+    {
+        sc::NamedMutex mutex(MUTEX_NAME);
+        while (signal < 2) sc::Timer::sleep(0.01f);
+        mutex.lock();
+        signal = 4;
+        mutex.lock();
+    });
+
+    while (signal < 1) sc::Timer::sleep(0.01f);
+    EXPECT_EQ( signal.load(), 1 );
+    signal = 2;
+    sc::Timer::sleep(0.1f);
+    EXPECT_EQ( signal.load(), 2 );
+    signal = 3;
+    while (signal < 4) sc::Timer::sleep(0.01f);
+    EXPECT_EQ( signal.load(), 4 );
+
+    th1.join();
+    th2.join();
+}
 
 TEST(SharedMemory, Basic1) {
     auto shmem = sc::SharedMemory::create(SHMEM_NAME, SHMEM_SIZE);
