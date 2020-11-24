@@ -73,7 +73,7 @@ TEST(NamedMutex, Basic)
         while (signal < 2) sc::Timer::sleep(0.01f);
         mutex.lock();
         signal = 4;
-        mutex.lock();
+        mutex.unlock();
     });
 
     while (signal < 1) sc::Timer::sleep(0.01f);

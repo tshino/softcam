@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <cmath>
+#include <cassert>
 
 
 namespace {
@@ -46,8 +47,9 @@ void Timer::sleep(float seconds)
 
 
 NamedMutex::NamedMutex(const char* name) :
-    m_handle(CreateMutexA(nullptr, false, name), close)
+    m_handle(CreateMutexA(nullptr, false, name), closeHandle)
 {
+    assert( m_handle.get() != nullptr );
 }
 
 void NamedMutex::lock()
@@ -57,9 +59,28 @@ void NamedMutex::lock()
 
 void NamedMutex::unlock()
 {
-    ReleaseMutex(m_handle.get());
+    bool ret = ReleaseMutex(m_handle.get());
+
+    assert( ret == true );
+    (void)ret;
 }
 
+void NamedMutex::closeHandle(void* ptr)
+{
+    if (ptr)
+    {
+        #ifndef NDEBUG
+        // check for the error of closing still owned mutex
+        bool ret1 = ReleaseMutex(ptr);
+        assert( ret1 == false );
+        #endif
+
+        bool ret2 = CloseHandle(ptr);
+
+        assert( ret2 == true );
+        (void)ret2;
+    }
+}
 
 SharedMemory
 SharedMemory::create(const char* name, unsigned long size)

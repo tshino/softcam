@@ -36,6 +36,8 @@ class NamedMutex
 
  private:
     std::shared_ptr<void>   m_handle;
+
+    static void closeHandle(void*);
 };
 
 
