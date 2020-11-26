@@ -37,7 +37,7 @@ TEST(Watchdog, Basic)
 
     heartbeat.stop();
 
-    SLEEP_S(MONITOR_TIMEOUT + MONITOR_INTERVAL * 2);
+    SLEEP_S(MONITOR_TIMEOUT + MONITOR_INTERVAL * 3);
     EXPECT_EQ( monitor.alive(), false );
 }
 
