@@ -91,6 +91,52 @@ TEST(Softcam, AttributesNormal)
     softcam->Release();
 }
 
+TEST(Softcam, AttributesDeactivatedServer)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    fb->deactivate();
+
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    EXPECT_NE( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->valid(), true );
+    EXPECT_EQ( softcam->width(), 320 );
+    EXPECT_EQ( softcam->height(), 240 );
+    EXPECT_EQ( softcam->framerate(), 60.0f );
+
+    softcam->Release();
+}
+
+TEST(Softcam, AttributesMultipleReceiver)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+
+    HRESULT hr = 555;
+    sc::Softcam* softcam1 = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam1, nullptr );
+    softcam1->AddRef();
+    sc::Softcam* softcam2 = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam2, nullptr );
+    softcam2->AddRef();
+
+    EXPECT_NE( softcam1->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam1->valid(), true );
+    EXPECT_EQ( softcam1->width(), 320 );
+    EXPECT_EQ( softcam1->height(), 240 );
+    EXPECT_EQ( softcam1->framerate(), 60.0f );
+    EXPECT_NE( softcam2->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam2->valid(), true );
+    EXPECT_EQ( softcam2->width(), 320 );
+    EXPECT_EQ( softcam2->height(), 240 );
+    EXPECT_EQ( softcam2->framerate(), 60.0f );
+
+    softcam1->Release();
+    softcam2->Release();
+}
+
 TEST(Softcam, AttributesRebootingReceiver)
 {
     auto fb = createFrameBufer(320, 240, 60);
