@@ -41,17 +41,17 @@ TEST(Softcam, QueryInterface)
         void *ptr = nullptr;
         hr = softcam->QueryInterface(IID_IBaseFilter, &ptr);
         EXPECT_EQ( hr, S_OK );
-        ASSERT_NE( ptr, nullptr );
+        EXPECT_EQ( (IBaseFilter*)ptr, softcam );
     }{
         void *ptr = nullptr;
         hr = softcam->QueryInterface(IID_IAMovieSetup, &ptr);
         EXPECT_EQ( hr, S_OK );
-        ASSERT_NE( ptr, nullptr );
+        EXPECT_EQ( (IAMovieSetup*)ptr, softcam );
     }{
         void *ptr = nullptr;
         hr = softcam->QueryInterface(IID_IAMStreamConfig, &ptr);
         EXPECT_EQ( hr, S_OK );
-        ASSERT_NE( ptr, nullptr );
+        EXPECT_EQ( (IAMStreamConfig*)ptr, softcam );
     }
 
     softcam->Release();
@@ -204,6 +204,36 @@ TEST(Softcam, AttributesRebootingSender)
     EXPECT_EQ( softcam->width(), 320 );
     EXPECT_EQ( softcam->height(), 240 );
     EXPECT_EQ( softcam->framerate(), 60.0f );
+
+    softcam->Release();
+}
+
+TEST(Softcam, IAMStreamConfigNoServer)
+{
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    IAMStreamConfig *amsc = softcam;
+    AM_MEDIA_TYPE *pmt = nullptr;
+    hr = amsc->GetFormat(&pmt);
+    EXPECT_EQ( hr, E_FAIL );
+    EXPECT_EQ( pmt, nullptr );
+
+    AM_MEDIA_TYPE mt{};
+    hr = amsc->SetFormat(&mt);
+    EXPECT_EQ( hr, E_FAIL );
+
+    int count = 55, size = 77;
+    hr = amsc->GetNumberOfCapabilities(&count, &size);
+    EXPECT_EQ( hr, E_FAIL );
+    EXPECT_EQ( count, 55 );
+    EXPECT_EQ( size, 77 );
+
+    BYTE scc[sizeof(VIDEO_STREAM_CONFIG_CAPS)];
+    hr = amsc->GetStreamCaps(0, &pmt, scc);
+    EXPECT_EQ( hr, E_FAIL );
 
     softcam->Release();
 }
