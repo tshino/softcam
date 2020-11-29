@@ -239,6 +239,40 @@ TEST(Softcam, IAMStreamConfigNoServer)
     softcam->Release();
 }
 
+TEST(Softcam, IAMStreamConfigNullPointer)
+{
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    IAMStreamConfig *amsc = softcam;
+    hr = amsc->GetFormat(nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+
+    hr = amsc->SetFormat(nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+
+    int count = 55, size = 77;
+    hr = amsc->GetNumberOfCapabilities(nullptr, &size);
+    EXPECT_EQ( hr, E_POINTER );
+    hr = amsc->GetNumberOfCapabilities(&count, nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+    hr = amsc->GetNumberOfCapabilities(nullptr, nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+
+    BYTE scc[sizeof(VIDEO_STREAM_CONFIG_CAPS)];
+    AM_MEDIA_TYPE *pmt = nullptr;
+    hr = amsc->GetStreamCaps(0, nullptr, scc);
+    EXPECT_EQ( hr, E_POINTER );
+    hr = amsc->GetStreamCaps(0, &pmt, nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+    hr = amsc->GetStreamCaps(0, nullptr, nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+
+    softcam->Release();
+}
+
 TEST(Softcam, IAMStreamConfigNormal)
 {
     auto fb = createFrameBufer(320, 240, 60);

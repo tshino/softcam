@@ -259,19 +259,18 @@ Softcam::GetFormat(AM_MEDIA_TYPE **out_pmt)
 HRESULT
 Softcam::GetNumberOfCapabilities(int *out_count, int *out_size)
 {
+    if (!out_count || !out_size)
+    {
+        LOG("-> E_POINTER\n");
+        return E_POINTER;
+    }
     if (!m_valid)
     {
         LOG("-> E_FAIL\n");
         return E_FAIL;
     }
-    if (out_count)
-    {
-        *out_count = 1;
-    }
-    if (out_size)
-    {
-        *out_size = sizeof(VIDEO_STREAM_CONFIG_CAPS);
-    }
+    *out_count = 1;
+    *out_size = sizeof(VIDEO_STREAM_CONFIG_CAPS);
     LOG("-> S_OK\n");
     return S_OK;
 }
