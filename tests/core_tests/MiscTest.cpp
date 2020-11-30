@@ -4,6 +4,7 @@
 #include <cstring>
 #include <thread>
 #include <atomic>
+#include <cmath>
 
 
 namespace {
@@ -34,6 +35,29 @@ TEST(Timer, Sleep) {
     auto t = timer.get();
 
     EXPECT_GT( t, 0.0f );
+}
+
+TEST(Timer, SleepAccuracy) {
+
+    float sum = 0.0f, sum_squared = 0.0f;
+    for (int i = 0; i < 10; i++)
+    {
+        const float expected = (float)i * 0.005f;
+
+        sc::Timer timer;
+        sc::Timer::sleep(expected);
+        float actual = timer.get();
+
+        float error = actual - expected;
+        sum += error;
+        sum_squared += error * error;
+    }
+
+    float mean = sum / 10.0f;
+    float variance = sum_squared / 10.0f - mean * mean;
+
+    EXPECT_LT( std::fabs(mean), 0.010f );
+    EXPECT_LT( std::sqrt(variance), 0.010f );
 }
 
 TEST(Timer, Rewind) {
