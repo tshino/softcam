@@ -42,7 +42,31 @@ void Timer::reset()
 
 void Timer::sleep(float seconds)
 {
-    Sleep((int)(seconds * 1000.0f));
+    if (seconds <= 0.0f)
+    {
+        return;
+    }
+    unsigned delay_msec = (unsigned)std::round(seconds * 1000.0f);
+    if (delay_msec == 0)
+    {
+        delay_msec = 1;
+    }
+    HANDLE e = CreateEventA(nullptr, false, false, nullptr);
+    MMRESULT ret = timeSetEvent(
+                    delay_msec,
+                    1,
+                    (LPTIMECALLBACK)e,
+                    0,
+                    TIME_ONESHOT | TIME_CALLBACK_EVENT_SET);
+    if (ret != 0)
+    {
+        WaitForSingleObject(e, INFINITE);
+    }
+    else
+    {
+        Sleep(delay_msec);
+    }
+    CloseHandle(e);
 }
 
 
