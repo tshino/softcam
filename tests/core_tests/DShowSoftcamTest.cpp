@@ -209,6 +209,34 @@ TEST(Softcam, AttributesRebootingSender)
     softcam->Release();
 }
 
+TEST(Softcam, AttributesIncompatibleRebootedSender)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    EXPECT_NE( softcam->getFrameBuffer(), nullptr );
+
+    fb->deactivate();
+    softcam->releaseFrameBuffer();
+
+    EXPECT_EQ( softcam->getFrameBuffer(), nullptr );
+
+    fb.reset();
+    fb = createFrameBufer(640, 480, 60);
+
+    EXPECT_EQ( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->valid(), true );
+    EXPECT_EQ( softcam->width(), 320 );
+    EXPECT_EQ( softcam->height(), 240 );
+    EXPECT_EQ( softcam->framerate(), 60.0f );
+
+    softcam->Release();
+}
+
 TEST(Softcam, IAMStreamConfigNoServer)
 {
     HRESULT hr = 555;
