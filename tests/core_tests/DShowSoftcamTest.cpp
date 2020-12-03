@@ -209,7 +209,7 @@ TEST(Softcam, AttributesRebootingSender)
     softcam->Release();
 }
 
-TEST(Softcam, AttributesIncompatibleRebootedSender)
+TEST(Softcam, AttributesIncompatibleSender)
 {
     auto fb = createFrameBufer(320, 240, 60);
 
@@ -226,9 +226,9 @@ TEST(Softcam, AttributesIncompatibleRebootedSender)
     EXPECT_EQ( softcam->getFrameBuffer(), nullptr );
 
     fb.reset();
-    fb = createFrameBufer(640, 480, 60);
+    fb = createFrameBufer(640, 480, 60);                // <<<
 
-    EXPECT_EQ( softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( softcam->getFrameBuffer(), nullptr );    // <<<
     EXPECT_EQ( softcam->valid(), true );
     EXPECT_EQ( softcam->width(), 320 );
     EXPECT_EQ( softcam->height(), 240 );
@@ -374,6 +374,40 @@ TEST(Softcam, IAMStreamConfigNormal)
     DeleteMediaType(pmt);
     pmt = nullptr;
 
+    softcam->Release();
+}
+
+TEST(Softcam, IBaseFilterEnumPins)
+{
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    IBaseFilter *base_filter = nullptr;
+    hr = softcam->QueryInterface(IID_IBaseFilter, reinterpret_cast<void**>(&base_filter));
+    EXPECT_EQ( hr, S_OK );
+    ASSERT_NE( base_filter, nullptr );
+
+    IEnumPins *enum_pins = nullptr;
+    hr = base_filter->EnumPins(&enum_pins);
+    EXPECT_EQ( hr, S_OK );
+    ASSERT_NE( enum_pins, nullptr );
+
+    IPin *pins[1] = {};
+    ULONG fetched = 0;
+    hr = enum_pins->Next(1, pins, &fetched);
+    EXPECT_EQ( hr, S_OK );
+    EXPECT_EQ( fetched, 1 );
+    ASSERT_NE( pins[0], nullptr );
+
+    pins[0]->Release();
+
+    hr = enum_pins->Next(1, pins, &fetched);
+    EXPECT_EQ( hr, S_FALSE );
+    EXPECT_EQ( fetched, 0 );
+
+    enum_pins->Release();
     softcam->Release();
 }
 
