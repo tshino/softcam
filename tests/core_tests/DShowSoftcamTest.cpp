@@ -412,4 +412,86 @@ TEST(Softcam, IBaseFilterEnumPins)
 }
 
 
+class SoftcamStream : public ::testing::Test
+{
+ protected:
+    sc::Softcam*        m_softcam = nullptr;
+    IBaseFilter*        m_base_filter = nullptr;
+    IPin*               m_pins[1] = {};
+    sc::SoftcamStream*  m_stream = nullptr;
+
+    virtual void SetUp()
+    {
+        HRESULT hr = 555;
+        m_softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+        if (m_softcam == nullptr)
+        {
+            return;
+        }
+        m_softcam->AddRef();
+
+        hr = m_softcam->QueryInterface(IID_IBaseFilter, reinterpret_cast<void**>(&m_base_filter));
+        if (hr != S_OK || m_base_filter == nullptr)
+        {
+            return;
+        }
+
+        IEnumPins *enum_pins = nullptr;
+        hr = m_base_filter->EnumPins(&enum_pins);
+        if (hr != S_OK || enum_pins == nullptr)
+        {
+            return;
+        }
+
+        ULONG fetched = 0;
+        hr = enum_pins->Next(1, m_pins, &fetched);
+        enum_pins->Release();
+        if (hr != S_OK || m_pins[0] == nullptr)
+        {
+            return;
+        }
+        m_stream = static_cast<sc::SoftcamStream*>(m_pins[0]);
+    }
+
+    virtual void TearDown()
+    {
+        if (m_pins[0])
+        {
+            m_pins[0]->Release();
+        }
+        if (m_softcam)
+        {
+            m_softcam->Release();
+        }
+    }
+};
+
+TEST_F(SoftcamStream, QueryInterface)
+{
+    ASSERT_NE( m_pins[0], nullptr );
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+    {
+        void *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IPin, &ptr);
+        EXPECT_EQ( hr, S_OK );
+        EXPECT_EQ( (IPin*)ptr, m_stream );
+    }{
+        void *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IQualityControl, &ptr);
+        EXPECT_EQ( hr, S_OK );
+        EXPECT_EQ( (IQualityControl*)ptr, m_stream );
+    }{
+        void *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IKsPropertySet, &ptr);
+        EXPECT_EQ( hr, S_OK );
+        EXPECT_EQ( (IKsPropertySet*)ptr, m_stream );
+    }{
+        void *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IAMStreamConfig, &ptr);
+        EXPECT_EQ( hr, S_OK );
+        EXPECT_EQ( (IAMStreamConfig*)ptr, m_stream );
+    }
+}
+
 } //namespace
