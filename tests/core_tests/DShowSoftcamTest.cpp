@@ -39,20 +39,23 @@ TEST(Softcam, QueryInterface)
     softcam->AddRef();
 
     {
-        void *ptr = nullptr;
-        hr = softcam->QueryInterface(IID_IBaseFilter, &ptr);
+        IBaseFilter *ptr = nullptr;
+        hr = softcam->QueryInterface(IID_IBaseFilter, reinterpret_cast<void**>(&ptr));
         EXPECT_EQ( hr, S_OK );
-        EXPECT_EQ( (IBaseFilter*)ptr, softcam );
+        EXPECT_EQ( ptr, softcam );
+        if (ptr) ptr->Release();
     }{
-        void *ptr = nullptr;
-        hr = softcam->QueryInterface(IID_IAMovieSetup, &ptr);
+        IAMovieSetup *ptr = nullptr;
+        hr = softcam->QueryInterface(IID_IAMovieSetup, reinterpret_cast<void**>(&ptr));
         EXPECT_EQ( hr, S_OK );
-        EXPECT_EQ( (IAMovieSetup*)ptr, softcam );
+        EXPECT_EQ( ptr, softcam );
+        if (ptr) ptr->Release();
     }{
-        void *ptr = nullptr;
-        hr = softcam->QueryInterface(IID_IAMStreamConfig, &ptr);
+        IAMStreamConfig *ptr = nullptr;
+        hr = softcam->QueryInterface(IID_IAMStreamConfig, reinterpret_cast<void**>(&ptr));
         EXPECT_EQ( hr, S_OK );
-        EXPECT_EQ( (IAMStreamConfig*)ptr, softcam );
+        EXPECT_EQ( ptr, softcam );
+        if (ptr) ptr->Release();
     }
 
     softcam->Release();
@@ -391,6 +394,7 @@ TEST(Softcam, IBaseFilterEnumPins)
 
     IEnumPins *enum_pins = nullptr;
     hr = base_filter->EnumPins(&enum_pins);
+    base_filter->Release();
     EXPECT_EQ( hr, S_OK );
     ASSERT_NE( enum_pins, nullptr );
 
@@ -475,25 +479,29 @@ TEST_F(SoftcamStream, QueryInterface)
     ASSERT_NE( m_stream, nullptr );
     HRESULT hr;
     {
-        void *ptr = nullptr;
-        hr = m_pins[0]->QueryInterface(IID_IPin, &ptr);
+        IPin *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IPin, reinterpret_cast<void**>(&ptr));
         EXPECT_EQ( hr, S_OK );
-        EXPECT_EQ( (IPin*)ptr, m_stream );
+        EXPECT_EQ( ptr, m_stream );
+        if (ptr) ptr->Release();
     }{
-        void *ptr = nullptr;
-        hr = m_pins[0]->QueryInterface(IID_IQualityControl, &ptr);
+        IQualityControl *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IQualityControl, reinterpret_cast<void**>(&ptr));
         EXPECT_EQ( hr, S_OK );
-        EXPECT_EQ( (IQualityControl*)ptr, m_stream );
+        EXPECT_EQ( ptr, m_stream );
+        if (ptr) ptr->Release();
     }{
-        void *ptr = nullptr;
-        hr = m_pins[0]->QueryInterface(IID_IKsPropertySet, &ptr);
+        IKsPropertySet *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IKsPropertySet, reinterpret_cast<void**>(&ptr));
         EXPECT_EQ( hr, S_OK );
-        EXPECT_EQ( (IKsPropertySet*)ptr, m_stream );
+        EXPECT_EQ( ptr, m_stream );
+        if (ptr) ptr->Release();
     }{
-        void *ptr = nullptr;
-        hr = m_pins[0]->QueryInterface(IID_IAMStreamConfig, &ptr);
+        IAMStreamConfig *ptr = nullptr;
+        hr = m_pins[0]->QueryInterface(IID_IAMStreamConfig, reinterpret_cast<void**>(&ptr));
         EXPECT_EQ( hr, S_OK );
-        EXPECT_EQ( (IAMStreamConfig*)ptr, m_stream );
+        EXPECT_EQ( ptr, m_stream );
+        if (ptr) ptr->Release();
     }
 }
 
