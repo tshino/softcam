@@ -1,5 +1,7 @@
 # Softcam
 
+[![MSBuild](https://github.com/tshino/softcam/workflows/MSBuild/badge.svg?branch=main)](https://github.com/tshino/softcam/actions?query=workflow%3AMSBuild)
+
 This is a library to make a virtual webcam on Windows.
 
 
