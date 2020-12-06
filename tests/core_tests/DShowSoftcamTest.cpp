@@ -415,6 +415,33 @@ TEST(Softcam, IBaseFilterEnumPins)
     softcam->Release();
 }
 
+TEST(Softcam, IBaseFilterQueryFilterInfo)
+{
+    HRESULT hr = 555;
+    sc::Softcam* softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( softcam, nullptr );
+    softcam->AddRef();
+
+    IBaseFilter *base_filter = nullptr;
+    hr = softcam->QueryInterface(IID_IBaseFilter, reinterpret_cast<void**>(&base_filter));
+    EXPECT_EQ( hr, S_OK );
+    ASSERT_NE( base_filter, nullptr );
+
+    FILTER_INFO info;
+    std::memset(&info, 99, sizeof(info));
+    hr = base_filter->QueryFilterInfo(&info);
+    EXPECT_EQ( hr, S_OK );
+    auto eos = std::find(std::begin(info.achName), std::end(info.achName), 0);
+    EXPECT_NE( eos, std::end(info.achName) );
+    EXPECT_EQ( info.pGraph, nullptr );
+
+    hr = base_filter->QueryFilterInfo(nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+
+    base_filter->Release();
+    softcam->Release();
+}
+
 
 class SoftcamStream : public ::testing::Test
 {
