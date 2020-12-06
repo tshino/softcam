@@ -17,9 +17,6 @@ const unsigned long SHMEM_SIZE = 888;
 const char SOME_DATA[] = "Hello, world!";
 const char ANOTHER_DATA[] = "12345";
 
-TEST(WorkflowTest, ShouldFail) {
-    EXPECT_EQ( true, false );
-}
 
 TEST(Timer, Basic1) {
     sc::Timer timer;
