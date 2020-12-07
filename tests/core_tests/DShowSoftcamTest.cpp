@@ -403,9 +403,9 @@ TEST(Softcam, IBaseFilterEnumPins)
     hr = enum_pins->Next(1, pins, &fetched);
     EXPECT_EQ( hr, S_OK );
     EXPECT_EQ( fetched, 1 );
-    ASSERT_NE( pins[0], nullptr );
+    EXPECT_NE( pins[0], nullptr );
 
-    pins[0]->Release();
+    if (pins[0]) pins[0]->Release();
 
     hr = enum_pins->Next(1, pins, &fetched);
     EXPECT_EQ( hr, S_FALSE );
@@ -530,6 +530,58 @@ TEST_F(SoftcamStream, QueryInterface)
         EXPECT_EQ( ptr, m_stream );
         if (ptr) ptr->Release();
     }
+}
+
+TEST_F(SoftcamStream, IPinEnumMediaTypes)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    SetUpSoftcamStream();
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+
+    IPin *pin = m_stream;
+    IEnumMediaTypes *enum_media_types = nullptr;
+    hr = pin->EnumMediaTypes(&enum_media_types);
+    EXPECT_EQ( hr, S_OK );
+    ASSERT_NE( enum_media_types, nullptr );
+
+    AM_MEDIA_TYPE *ppmt[1] = {};
+    ULONG fetched = 0;
+    hr = enum_media_types->Next(1, ppmt, &fetched);
+    EXPECT_EQ( hr, S_OK );
+    EXPECT_EQ( fetched, 1 );
+    EXPECT_NE( ppmt[0], nullptr );
+    if (AM_MEDIA_TYPE *pmt = ppmt[0])
+    {
+        ASSERT_NE( pmt, nullptr );
+        EXPECT_EQ( pmt->majortype, MEDIATYPE_Video );
+        EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
+        EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
+        EXPECT_EQ( pmt->bTemporalCompression, FALSE );
+        EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
+        EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
+        ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
+        ASSERT_NE( pmt->pbFormat, nullptr );
+        VIDEOINFOHEADER* pFormat = (VIDEOINFOHEADER*)pmt->pbFormat;
+        EXPECT_GT( pFormat->dwBitRate, 0u );
+        EXPECT_GT( pFormat->AvgTimePerFrame, 0 );
+        EXPECT_GE( pFormat->bmiHeader.biSize, sizeof(BITMAPINFOHEADER) );
+        EXPECT_EQ( pFormat->bmiHeader.biWidth, 320 );
+        EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
+        EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
+        EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
+        EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
+        EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
+
+        DeleteMediaType(ppmt[0]);
+        ppmt[0] = nullptr;
+    }
+
+    hr = enum_media_types->Next(1, ppmt, &fetched);
+    EXPECT_EQ( hr, S_FALSE );
+    EXPECT_EQ( fetched, 0 );
+
+    enum_media_types->Release();
 }
 
 TEST_F(SoftcamStream, IAMStreamConfigNoServer)
