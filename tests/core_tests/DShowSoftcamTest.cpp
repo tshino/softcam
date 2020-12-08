@@ -14,6 +14,30 @@ std::unique_ptr<sc::FrameBuffer> createFrameBufer(int width, int height, float f
     return std::make_unique<sc::FrameBuffer>(sc::FrameBuffer::create(width, height, framerate));
 }
 
+void checkMediaType320x240(const AM_MEDIA_TYPE *pmt)
+{
+    ASSERT_NE( pmt, nullptr );
+    EXPECT_EQ( pmt->majortype, MEDIATYPE_Video );
+    EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
+    EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
+    EXPECT_EQ( pmt->bTemporalCompression, FALSE );
+    EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
+    EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
+    ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
+
+    ASSERT_NE( pmt->pbFormat, nullptr );
+    VIDEOINFOHEADER* pFormat = (VIDEOINFOHEADER*)pmt->pbFormat;
+    EXPECT_GT( pFormat->dwBitRate, 0u );
+    EXPECT_GT( pFormat->AvgTimePerFrame, 0 );
+    EXPECT_GE( pFormat->bmiHeader.biSize, sizeof(BITMAPINFOHEADER) );
+    EXPECT_EQ( pFormat->bmiHeader.biWidth, 320 );
+    EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
+    EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
+    EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
+    EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
+    EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
+}
+
 // This is a dummy GUID representing nothing.
 // {12A54BBA-9F51-41B0-B331-0C3B08D1269F}
 const GUID SOME_GUID =
@@ -317,26 +341,7 @@ TEST(Softcam, IAMStreamConfigNormal)
     AM_MEDIA_TYPE *pmt = nullptr;
     hr = amsc->GetFormat(&pmt);
     EXPECT_EQ( hr, S_OK );
-    ASSERT_NE( pmt, nullptr );
-    EXPECT_EQ( pmt->majortype, MEDIATYPE_Video );
-    EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
-    EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
-    EXPECT_EQ( pmt->bTemporalCompression, FALSE );
-    EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
-    EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
-    ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
-    ASSERT_NE( pmt->pbFormat, nullptr );
-    VIDEOINFOHEADER* pFormat = (VIDEOINFOHEADER*)pmt->pbFormat;
-    EXPECT_GT( pFormat->dwBitRate, 0u );
-    EXPECT_GT( pFormat->AvgTimePerFrame, 0 );
-    EXPECT_GE( pFormat->bmiHeader.biSize, sizeof(BITMAPINFOHEADER) );
-    EXPECT_EQ( pFormat->bmiHeader.biWidth, 320 );
-    EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
-    EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
-    EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
-    EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
-    EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
-    pFormat = nullptr;
+    checkMediaType320x240( pmt );
 
     hr = amsc->SetFormat(pmt);
     EXPECT_EQ( hr, S_OK );
@@ -353,26 +358,7 @@ TEST(Softcam, IAMStreamConfigNormal)
     std::unique_ptr<BYTE[]> scc(new BYTE[size]);
     hr = amsc->GetStreamCaps(0, &pmt, scc.get());
     EXPECT_EQ( hr, S_OK );
-    ASSERT_NE( pmt, nullptr );
-    EXPECT_EQ( pmt->majortype, MEDIATYPE_Video );
-    EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
-    EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
-    EXPECT_EQ( pmt->bTemporalCompression, FALSE );
-    EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
-    EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
-    ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
-    ASSERT_NE( pmt->pbFormat, nullptr );
-    pFormat = (VIDEOINFOHEADER*)pmt->pbFormat;
-    EXPECT_GT( pFormat->dwBitRate, 0u );
-    EXPECT_GT( pFormat->AvgTimePerFrame, 0 );
-    EXPECT_GE( pFormat->bmiHeader.biSize, sizeof(BITMAPINFOHEADER) );
-    EXPECT_EQ( pFormat->bmiHeader.biWidth, 320 );
-    EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
-    EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
-    EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
-    EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
-    EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
-    pFormat = nullptr;
+    checkMediaType320x240( pmt );
 
     DeleteMediaType(pmt);
     pmt = nullptr;
@@ -550,32 +536,10 @@ TEST_F(SoftcamStream, IPinEnumMediaTypes)
     hr = enum_media_types->Next(1, ppmt, &fetched);
     EXPECT_EQ( hr, S_OK );
     EXPECT_EQ( fetched, 1 );
-    EXPECT_NE( ppmt[0], nullptr );
-    if (AM_MEDIA_TYPE *pmt = ppmt[0])
-    {
-        ASSERT_NE( pmt, nullptr );
-        EXPECT_EQ( pmt->majortype, MEDIATYPE_Video );
-        EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
-        EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
-        EXPECT_EQ( pmt->bTemporalCompression, FALSE );
-        EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
-        EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
-        ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
-        ASSERT_NE( pmt->pbFormat, nullptr );
-        VIDEOINFOHEADER* pFormat = (VIDEOINFOHEADER*)pmt->pbFormat;
-        EXPECT_GT( pFormat->dwBitRate, 0u );
-        EXPECT_GT( pFormat->AvgTimePerFrame, 0 );
-        EXPECT_GE( pFormat->bmiHeader.biSize, sizeof(BITMAPINFOHEADER) );
-        EXPECT_EQ( pFormat->bmiHeader.biWidth, 320 );
-        EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
-        EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
-        EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
-        EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
-        EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
+    checkMediaType320x240( ppmt[0] );
 
-        DeleteMediaType(ppmt[0]);
-        ppmt[0] = nullptr;
-    }
+    DeleteMediaType(ppmt[0]);
+    ppmt[0] = nullptr;
 
     hr = enum_media_types->Next(1, ppmt, &fetched);
     EXPECT_EQ( hr, S_FALSE );
@@ -653,26 +617,7 @@ TEST_F(SoftcamStream, IAMStreamConfigNormal)
     AM_MEDIA_TYPE *pmt = nullptr;
     hr = amsc->GetFormat(&pmt);
     EXPECT_EQ( hr, S_OK );
-    ASSERT_NE( pmt, nullptr );
-    EXPECT_EQ( pmt->majortype, MEDIATYPE_Video );
-    EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
-    EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
-    EXPECT_EQ( pmt->bTemporalCompression, FALSE );
-    EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
-    EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
-    ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
-    ASSERT_NE( pmt->pbFormat, nullptr );
-    VIDEOINFOHEADER* pFormat = (VIDEOINFOHEADER*)pmt->pbFormat;
-    EXPECT_GT( pFormat->dwBitRate, 0u );
-    EXPECT_GT( pFormat->AvgTimePerFrame, 0 );
-    EXPECT_GE( pFormat->bmiHeader.biSize, sizeof(BITMAPINFOHEADER) );
-    EXPECT_EQ( pFormat->bmiHeader.biWidth, 320 );
-    EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
-    EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
-    EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
-    EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
-    EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
-    pFormat = nullptr;
+    checkMediaType320x240( pmt );
 
     hr = amsc->SetFormat(pmt);
     EXPECT_EQ( hr, S_OK );
@@ -689,26 +634,7 @@ TEST_F(SoftcamStream, IAMStreamConfigNormal)
     std::unique_ptr<BYTE[]> scc(new BYTE[size]);
     hr = amsc->GetStreamCaps(0, &pmt, scc.get());
     EXPECT_EQ( hr, S_OK );
-    ASSERT_NE( pmt, nullptr );
-    EXPECT_EQ( pmt->majortype, MEDIATYPE_Video );
-    EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
-    EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
-    EXPECT_EQ( pmt->bTemporalCompression, FALSE );
-    EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
-    EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
-    ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
-    ASSERT_NE( pmt->pbFormat, nullptr );
-    pFormat = (VIDEOINFOHEADER*)pmt->pbFormat;
-    EXPECT_GT( pFormat->dwBitRate, 0u );
-    EXPECT_GT( pFormat->AvgTimePerFrame, 0 );
-    EXPECT_GE( pFormat->bmiHeader.biSize, sizeof(BITMAPINFOHEADER) );
-    EXPECT_EQ( pFormat->bmiHeader.biWidth, 320 );
-    EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
-    EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
-    EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
-    EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
-    EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
-    pFormat = nullptr;
+    checkMediaType320x240( pmt );
 
     DeleteMediaType(pmt);
     pmt = nullptr;
