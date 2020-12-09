@@ -15,24 +15,25 @@ extern "C"
         Camera applications running on the system will be able to find the
         new virtual camera through DirectShow API.
 
-        `width` and `height` specify the dimension of the camera image.
-        The width and height should be a positive number and be a multiple
-        of four.
+        The `width` argument and the `height` argument specify the dimension
+        of the camera image. The width and the height should be a positive
+        number and be a multiple of four.
 
-        `framerate` is an optional argument that specifies the reference
-        framerate of the camera. The default framerate is 60.
-        If the value of `framerate` is 0, the interval of each frame is not
-        constrained.
+        The `framerate` argument is an optional argument that specifies the
+        reference framerate of the camera. The default framerate is 60.
+        If the value of the `framerate` argument is 0, the interval of each
+        frame is not constrained.
 
-        If this function succeeded it returns a handle of the new virtual
+        If this function succeeds, it returns the handle of a new virtual
         camera instance, otherwise, it returns a null pointer.
 
         This function fails if another instance already exists in the system.
 
         The new instance created by this function should be deleted with
-        `scDeleteCamera` when it no longer is used.
-        If the caller process has terminated without calling `scDeleteCamera`,
-        the virtual camera and associated resources are deleted automatically.
+        the `scDeleteCamera` function when it no longer is used.
+        If the caller process terminates without calling the `scDeleteCamera`
+        function, the virtual camera intance and associated resources are
+        deleted automatically.
     */
     scCamera    scCreateCamera(int width, int height, float framerate = 60.0f);
 
