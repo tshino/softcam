@@ -44,6 +44,16 @@ extern "C"
 
     /*
         This function sends a new frame of a virtual camera.
+
+        If the framerate set to the virtual camera is not zero, this
+        function tries to make the timing to deliver the new image ideal
+        as much as possible by sleeping for an appropriate time inside the
+        function.
+
+        If the framerate set to the virtual camera is zero, this function
+        sends the new image immediately and does not control that timing.
+        This is useful if the application uses another source stream such
+        as actual webcams.
     */
     void        scSendFrame(scCamera camera, const void* image_bits);
 
