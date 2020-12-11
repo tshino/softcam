@@ -21,7 +21,7 @@ void checkMediaType320x240(const AM_MEDIA_TYPE *pmt)
     EXPECT_EQ( pmt->subtype, MEDIASUBTYPE_RGB24 );
     EXPECT_EQ( pmt->bFixedSizeSamples, TRUE );
     EXPECT_EQ( pmt->bTemporalCompression, FALSE );
-    EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3 );
+    EXPECT_EQ( pmt->lSampleSize, 320 * 240 * 3u );
     EXPECT_EQ( pmt->formattype, FORMAT_VideoInfo );
     ASSERT_GE( pmt->cbFormat, sizeof(VIDEOINFOHEADER) );
 
@@ -34,8 +34,8 @@ void checkMediaType320x240(const AM_MEDIA_TYPE *pmt)
     EXPECT_EQ( pFormat->bmiHeader.biHeight, 240 );
     EXPECT_EQ( pFormat->bmiHeader.biPlanes, 1 );
     EXPECT_EQ( pFormat->bmiHeader.biBitCount, 24 );
-    EXPECT_EQ( pFormat->bmiHeader.biCompression, BI_RGB );
-    EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3 );
+    EXPECT_EQ( pFormat->bmiHeader.biCompression, (DWORD)BI_RGB );
+    EXPECT_EQ( pFormat->bmiHeader.biSizeImage, 320 * 240 * 3u );
 }
 
 // This is a dummy GUID representing nothing.
@@ -392,14 +392,14 @@ TEST_F(Softcam, IBaseFilterEnumPins)
     ULONG fetched = 0;
     hr = enum_pins->Next(1, pins, &fetched);
     EXPECT_EQ( hr, S_OK );
-    EXPECT_EQ( fetched, 1 );
+    EXPECT_EQ( fetched, 1u );
     EXPECT_NE( pins[0], nullptr );
 
     if (pins[0]) pins[0]->Release();
 
     hr = enum_pins->Next(1, pins, &fetched);
     EXPECT_EQ( hr, S_FALSE );
-    EXPECT_EQ( fetched, 0 );
+    EXPECT_EQ( fetched, 0u );
 
     enum_pins->Release();
 }
@@ -537,7 +537,7 @@ TEST_F(SoftcamStream, IPinEnumMediaTypes)
     ULONG fetched = 0;
     hr = enum_media_types->Next(1, ppmt, &fetched);
     EXPECT_EQ( hr, S_OK );
-    EXPECT_EQ( fetched, 1 );
+    EXPECT_EQ( fetched, 1u );
     checkMediaType320x240( ppmt[0] );
 
     DeleteMediaType(ppmt[0]);
@@ -545,7 +545,7 @@ TEST_F(SoftcamStream, IPinEnumMediaTypes)
 
     hr = enum_media_types->Next(1, ppmt, &fetched);
     EXPECT_EQ( hr, S_FALSE );
-    EXPECT_EQ( fetched, 0 );
+    EXPECT_EQ( fetched, 0u );
 
     enum_media_types->Release();
 }

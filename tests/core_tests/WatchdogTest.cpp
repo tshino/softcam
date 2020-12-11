@@ -90,7 +90,7 @@ TEST(Watchdog, HeartbeatUpdatesSignal)
     SLEEP_S(HEARTBEAT_INTERVAL * 3);
     EXPECT_EQ( heartbeat.alive(), true );
     auto value1 = signal.load();
-    EXPECT_NE( value1, 0 );
+    EXPECT_NE( value1, 0u );
 
     SLEEP_S(HEARTBEAT_INTERVAL * 3);
     EXPECT_EQ( heartbeat.alive(), true );

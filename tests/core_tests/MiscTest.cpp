@@ -158,18 +158,18 @@ TEST(SharedMemory, InvalidArgs) {
         auto shmem = sc::SharedMemory::create(SHMEM_NAME, 0);
         EXPECT_FALSE( shmem );
         EXPECT_EQ( shmem.get(), nullptr );
-        EXPECT_EQ( shmem.size(), 0 );
+        EXPECT_EQ( shmem.size(), 0u );
     }{
         auto shmem = sc::SharedMemory::create("\\", SHMEM_SIZE);
         EXPECT_FALSE( shmem );
         EXPECT_EQ( shmem.get(), nullptr );
-        EXPECT_EQ( shmem.size(), 0 );
+        EXPECT_EQ( shmem.size(), 0u );
     }{
         auto view1 = sc::SharedMemory::create(SHMEM_NAME, SHMEM_SIZE);
         auto view2 = sc::SharedMemory::open(ANOTHER_NAME);
         EXPECT_FALSE( view2 );
         EXPECT_EQ( view2.get(), nullptr );
-        EXPECT_EQ( view2.size(), 0 );
+        EXPECT_EQ( view2.size(), 0u );
     }
 }
 
@@ -181,7 +181,7 @@ TEST(SharedMemory, OpenBeforeCreateFails) {
     EXPECT_TRUE( view2 );
     EXPECT_EQ( view1.get(), nullptr );
     EXPECT_NE( view2.get(), nullptr );
-    EXPECT_EQ( view1.size(), 0 );
+    EXPECT_EQ( view1.size(), 0u );
     EXPECT_GE( view2.size(), SHMEM_SIZE );
 }
 
@@ -192,7 +192,7 @@ TEST(SharedMemory, MultipleCreateFails) {
     EXPECT_TRUE( view1 );
     EXPECT_FALSE( view2 );
     EXPECT_EQ( view2.get(), nullptr );
-    EXPECT_EQ( view2.size(), 0 );
+    EXPECT_EQ( view2.size(), 0u );
 }
 
 TEST(SharedMemory, MultipleOpenSucceeds) {

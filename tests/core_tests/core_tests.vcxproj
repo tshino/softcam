@@ -54,7 +54,7 @@
       <PreprocessorDefinitions>WIN32;X64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>..\..\src;..\..\src\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -69,7 +69,7 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;X64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>..\..\src;..\..\src\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
