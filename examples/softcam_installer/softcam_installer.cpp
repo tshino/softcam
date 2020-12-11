@@ -44,10 +44,10 @@ Func* GetProc(HMODULE hmod, const std::string& name)
 
 
 int WINAPI WinMain(
-    HINSTANCE hInstance,
-    HINSTANCE hPrevInstance,
-    LPSTR lpszCmdLine,
-    int nCmdShow)
+    HINSTANCE /*hInstance*/,
+    HINSTANCE /*hPrevInstance*/,
+    LPSTR /*lpszCmdLine*/,
+    int /*nCmdShow*/)
 {
     if (__argc != 3)
     {
