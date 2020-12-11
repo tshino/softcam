@@ -56,7 +56,7 @@ TEST(Timer, SleepAccuracy) {
     float mean = sum / 10.0f;
     float variance = sum_squared / 10.0f - mean * mean;
 
-    EXPECT_LT( std::fabs(mean), 0.001f );
+    EXPECT_LT( std::fabs(mean), 0.003f );
     EXPECT_LT( std::sqrt(variance), 0.003f );
 }
 
