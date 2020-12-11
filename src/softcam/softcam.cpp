@@ -30,7 +30,7 @@ const AMOVIESETUP_MEDIATYPE s_pin_types[] =
 const AMOVIESETUP_PIN s_pins[] =
 {
     {
-        L"Output",              // Pin string name
+        const_cast<LPWSTR>(L"Output"),  // Pin string name
         FALSE,                  // Is it rendered
         TRUE,                   // Is it an output
         FALSE,                  // Can we have none
