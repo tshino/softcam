@@ -109,7 +109,7 @@ void fillMediaType(AM_MEDIA_TYPE* amt, int width, int height, float framerate)
     {
         framerate = 60.0f;
     }
-    const float bit_rate = width * height * 24 * framerate;
+    const float bit_rate = (float)width * (float)height * 24 * framerate;
     const float period = 10 * 1000 * 1000 / framerate;
 
     VIDEOINFOHEADER* pFormat = (VIDEOINFOHEADER*)pbFormat;
@@ -321,8 +321,8 @@ Softcam::GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc)
     scc->ShrinkTapsY = 0;
     scc->MinFrameInterval = format->AvgTimePerFrame;
     scc->MaxFrameInterval = format->AvgTimePerFrame;
-    scc->MinBitsPerSecond = format->dwBitRate;
-    scc->MaxBitsPerSecond = format->dwBitRate;
+    scc->MinBitsPerSecond = (LONG)format->dwBitRate;
+    scc->MaxBitsPerSecond = (LONG)format->dwBitRate;
     LOG("-> S_OK\n");
     return S_OK;
 }
@@ -410,7 +410,7 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
     BYTE *pData;
     pms->GetPointer(&pData);
     long lDataLen = pms->GetSize();
-    ZeroMemory(pData, lDataLen);
+    ZeroMemory(pData, (std::size_t)lDataLen);
     {
         if (auto fb = getParent()->getFrameBuffer())
         {
@@ -433,7 +433,7 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
                     // Darken the image to indicate that the source is inactive.
                     for (std::size_t i = 0; i < size; i++)
                     {
-                        pData[i] = pData[i] / 4;
+                        pData[i] /= 4;
                     }
                 }
                 std::memcpy(m_screenshot.get(), pData, size);
@@ -507,7 +507,7 @@ HRESULT SoftcamStream::DecideBufferSize(IMemAllocator *pAlloc,
 
     VIDEOINFO *pvi = (VIDEOINFO *)m_mt.Format();
     pProperties->cBuffers = 1;
-    pProperties->cbBuffer = pvi->bmiHeader.biSizeImage;
+    pProperties->cbBuffer = (long)pvi->bmiHeader.biSizeImage;
 
     ALLOCATOR_PROPERTIES actual;
     hr = pAlloc->SetProperties(pProperties, &actual);

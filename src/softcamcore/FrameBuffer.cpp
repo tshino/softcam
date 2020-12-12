@@ -164,13 +164,13 @@ uint64_t FrameBuffer::frameCounter() const
 bool FrameBuffer::active() const
 {
     std::lock_guard<NamedMutex> lock(m_mutex);
-    return m_shmem ? header()->m_is_active : false;
+    return m_shmem && header()->m_is_active;
 }
 
 bool FrameBuffer::connected() const
 {
     std::lock_guard<NamedMutex> lock(m_mutex);
-    return m_shmem ? header()->m_connected : false;
+    return m_shmem && header()->m_connected;
 }
 
 void FrameBuffer::deactivate()
@@ -188,7 +188,7 @@ void FrameBuffer::write(const void* image_bits)
     std::memcpy(
             frame->imageData(),
             image_bits,
-            3 * frame->m_width * frame->m_height);
+            3 * (uint32_t)frame->m_width * (uint32_t)frame->m_height);
     frame->m_frame_counter += 1;
 }
 
@@ -211,7 +211,7 @@ void FrameBuffer::transferToDIB(void* image_bits, uint64_t* out_frame_counter)
         for (int y = 0; y < h; y++)
         {
             const std::uint8_t* src = image + 3 * w * (h - 1 - y);
-            std::memcpy(dest, src, 3 * w);
+            std::memcpy(dest, src, 3 * (uint32_t)w);
             dest += 3 * w + gap;
         }
         *out_frame_counter = frame->m_frame_counter;
