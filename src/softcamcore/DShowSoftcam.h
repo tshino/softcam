@@ -18,13 +18,13 @@ public:
 
     // IUnknown Methods
     DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, __deref_out void **ppv);
+    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, __deref_out void **ppv) override;
 
     // IAMStreamConfig
-    HRESULT SetFormat(AM_MEDIA_TYPE *mt);
-    HRESULT GetFormat(AM_MEDIA_TYPE **out_pmt);
-    HRESULT GetNumberOfCapabilities(int *out_count, int *out_size);
-    HRESULT GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc);
+    HRESULT SetFormat(AM_MEDIA_TYPE *mt) override;
+    HRESULT GetFormat(AM_MEDIA_TYPE **out_pmt) override;
+    HRESULT GetNumberOfCapabilities(int *out_count, int *out_size) override;
+    HRESULT GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc) override;
 
     FrameBuffer*    getFrameBuffer();
     bool            valid() const { return m_valid; }
@@ -52,36 +52,36 @@ class SoftcamStream : public CSourceStream, public IKsPropertySet, public IAMStr
 
     // IUnknown
     DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, __deref_out void **ppv);
+    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, __deref_out void **ppv) override;
 
     // CBasePin
-    STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
+    STDMETHODIMP Notify(IBaseFilter * pSender, Quality q) override;
 
     // CBaseOutputPin
     // Ask for buffers of the size appropriate to the agreed media type
     HRESULT DecideBufferSize(IMemAllocator *pIMemAlloc,
-                             ALLOCATOR_PROPERTIES *pProperties);
+                             ALLOCATOR_PROPERTIES *pProperties) override;
 
     // CSourceStream
-    HRESULT FillBuffer(IMediaSample *pms);
-    HRESULT GetMediaType(CMediaType *pMediaType);
-    HRESULT OnThreadCreate(void);
+    HRESULT FillBuffer(IMediaSample *pms) override;
+    HRESULT GetMediaType(CMediaType *pMediaType) override;
+    HRESULT OnThreadCreate(void) override;
 
     //  IKsPropertySet
     HRESULT Set(REFGUID guidPropSet, DWORD dwPropID,
                 LPVOID pInstanceData, DWORD cbInstanceData,
-                LPVOID pPropData, DWORD cbPropData);
+                LPVOID pPropData, DWORD cbPropData) override;
     HRESULT Get(REFGUID guidPropSet, DWORD dwPropID,
                 LPVOID pInstanceData, DWORD cbInstanceData,
-                LPVOID pPropData, DWORD cbPropData, DWORD *pcbReturned);
+                LPVOID pPropData, DWORD cbPropData, DWORD *pcbReturned) override;
     HRESULT QuerySupported(REFGUID guidPropSet, DWORD dwPropID,
-                           DWORD *pTypeSupport);
+                           DWORD *pTypeSupport) override;
 
     // IAMStreamConfig
-    HRESULT SetFormat(AM_MEDIA_TYPE *mt);
-    HRESULT GetFormat(AM_MEDIA_TYPE **out_pmt);
-    HRESULT GetNumberOfCapabilities(int *out_count, int *out_size);
-    HRESULT GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc);
+    HRESULT SetFormat(AM_MEDIA_TYPE *mt) override;
+    HRESULT GetFormat(AM_MEDIA_TYPE **out_pmt) override;
+    HRESULT GetNumberOfCapabilities(int *out_count, int *out_size) override;
+    HRESULT GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc) override;
 
 private:
     const bool  m_valid;
