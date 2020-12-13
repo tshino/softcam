@@ -7,7 +7,6 @@
 
 namespace {
 
-const auto close = [](void* ptr) { if (ptr) CloseHandle(ptr); };
 const auto unmap = [](void* ptr) { if (ptr) UnmapViewOfFile(ptr); };
 
 } //namespace
@@ -121,7 +120,7 @@ SharedMemory::open(const char* name)
 SharedMemory::SharedMemory(const char* name, unsigned long size) :
     m_handle(
         CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, size, name),
-        close),
+        closeHandle),
     m_address(
         (m_handle && GetLastError() != ERROR_ALREADY_EXISTS)
             ? MapViewOfFile(m_handle.get(), FILE_MAP_WRITE, 0, 0, 0) : nullptr,
@@ -133,7 +132,7 @@ SharedMemory::SharedMemory(const char* name, unsigned long size) :
 SharedMemory::SharedMemory(const char* name) :
     m_handle(
         OpenFileMappingA(FILE_MAP_WRITE, false, name),
-        close),
+        closeHandle),
     m_address(
         m_handle
             ? MapViewOfFile(m_handle.get(), FILE_MAP_WRITE, 0, 0, 0) : nullptr,
@@ -156,6 +155,18 @@ SharedMemory::release()
     m_size = 0;
     m_address.reset();
     m_handle.reset();
+}
+
+void
+SharedMemory::closeHandle(void* ptr)
+{
+    if (ptr)
+    {
+        bool ret = CloseHandle(ptr);
+
+        assert( ret == true );
+        (void)ret;
+    }
 }
 
 

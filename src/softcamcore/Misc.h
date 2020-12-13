@@ -63,6 +63,8 @@ class SharedMemory
     explicit SharedMemory(const char* name, unsigned long size);
     explicit SharedMemory(const char* name);
     void    release();
+
+    static void closeHandle(void*);
 };
 
 
