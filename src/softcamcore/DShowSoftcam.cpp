@@ -484,7 +484,7 @@ HRESULT SoftcamStream::GetMediaType(CMediaType *pmt)
     }
 
     VIDEOINFOHEADER *pvi = (VIDEOINFOHEADER*)pmt->AllocFormatBuffer(sizeof(VIDEOINFOHEADER));
-    if (NULL == pvi)
+    if (pvi == nullptr)
     {
         LOG("-> E_OUTOFMEMORY\n");
         return E_OUTOFMEMORY;
@@ -557,7 +557,7 @@ HRESULT SoftcamStream::Get(REFGUID guidPropSet, DWORD dwPropID,
         LOG("-> E_PROP_ID_UNSUPPORTED\n");
         return E_PROP_ID_UNSUPPORTED;
     }
-    if (pPropData == NULL && pcbReturned == NULL)
+    if (pPropData == nullptr && pcbReturned == nullptr)
     {
         LOG("-> E_POINTER\n");
         return E_POINTER;
