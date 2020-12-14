@@ -550,6 +550,29 @@ TEST_F(SoftcamStream, IPinEnumMediaTypes)
     enum_media_types->Release();
 }
 
+TEST_F(SoftcamStream, IKsPropertySet)
+{
+    SetUpSoftcamStream();
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+
+    IKsPropertySet *ksps = m_stream;
+    hr = ksps->Set(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY,
+                   nullptr, 0, nullptr, 0);
+    EXPECT_EQ( hr, E_NOTIMPL );
+
+    hr = ksps->Get(AM_KSPROPSETID_TSRateChange, 0, 0, 0, 0, 0, 0);
+    EXPECT_EQ( hr, E_PROP_SET_UNSUPPORTED );
+
+    hr = ksps->Get(AMPROPSETID_Pin, 999, 0, 0, 0, 0, 0);
+    EXPECT_EQ( hr, E_PROP_ID_UNSUPPORTED );
+
+    hr = ksps->Get(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY,
+                   nullptr, 0, nullptr, 0, nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+
+}
+
 TEST_F(SoftcamStream, IAMStreamConfigNoServer)
 {
     SetUpSoftcamStream();
