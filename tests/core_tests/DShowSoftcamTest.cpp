@@ -571,6 +571,35 @@ TEST_F(SoftcamStream, IKsPropertySet)
                    nullptr, 0, nullptr, 0, nullptr);
     EXPECT_EQ( hr, E_POINTER );
 
+    DWORD cbReturned = 99;
+    hr = ksps->Get(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY,
+                   nullptr, 0, nullptr, 0, &cbReturned);
+    EXPECT_EQ( hr, S_OK );
+    EXPECT_EQ( cbReturned, sizeof(GUID) );
+
+    int x = 999;
+    hr = ksps->Get(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY,
+                   nullptr, 0, &x, sizeof(x), nullptr);
+    EXPECT_EQ( hr, E_UNEXPECTED );
+    EXPECT_EQ( x, 999 );
+
+    GUID prop{};
+    hr = ksps->Get(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY,
+                   nullptr, 0, &prop, sizeof(prop), nullptr);
+    EXPECT_EQ( hr, S_OK );
+    EXPECT_EQ( prop, PIN_CATEGORY_CAPTURE );
+
+    hr = ksps->QuerySupported(AM_KSPROPSETID_TSRateChange, 0, nullptr);
+    EXPECT_EQ( hr, E_PROP_SET_UNSUPPORTED );
+
+    hr = ksps->QuerySupported(AMPROPSETID_Pin, 999, nullptr);
+    EXPECT_EQ( hr, E_PROP_ID_UNSUPPORTED );
+
+    DWORD typeSupported = 99;
+    hr = ksps->QuerySupported(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY,
+                              &typeSupported);
+    EXPECT_EQ( hr, S_OK );
+    EXPECT_EQ( typeSupported, KSPROPERTY_SUPPORT_GET );
 }
 
 TEST_F(SoftcamStream, IAMStreamConfigNoServer)
