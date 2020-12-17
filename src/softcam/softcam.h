@@ -59,6 +59,9 @@ extern "C"
 
     /*
         This function waits for an application to connect to a virtual camera.
+
+        If the `timeout` argument is greater than 0, this function timeouts
+        after the specified time if no application accesses the virtual camera.
     */
     bool        scWaitForConnection(scCamera camera, float timeout = 0.0f);
 }
