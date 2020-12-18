@@ -599,7 +599,7 @@ TEST_F(SoftcamStream, IKsPropertySet)
     hr = ksps->QuerySupported(AMPROPSETID_Pin, AMPROPERTY_PIN_CATEGORY,
                               &typeSupported);
     EXPECT_EQ( hr, S_OK );
-    EXPECT_EQ( typeSupported, KSPROPERTY_SUPPORT_GET );
+    EXPECT_EQ( typeSupported, (DWORD)KSPROPERTY_SUPPORT_GET );
 }
 
 TEST_F(SoftcamStream, IAMStreamConfigNoServer)
