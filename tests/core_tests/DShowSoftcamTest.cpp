@@ -694,5 +694,124 @@ TEST_F(SoftcamStream, IAMStreamConfigNormal)
     pmt = nullptr;
 }
 
+class MediaSampleMock : public CUnknown, public IMediaSample
+{
+ public:
+    BYTE*       m_ptr;
+    std::size_t m_size;
+    MediaSampleMock(BYTE* ptr, std::size_t size) :
+        CUnknown("", this), m_ptr(ptr), m_size(size)
+    {
+    }
+
+    DECLARE_IUNKNOWN
+
+    virtual HRESULT GetPointer(BYTE **ppBuffer)
+    {
+        *ppBuffer = m_ptr;
+        return S_OK;
+    }
+    virtual long GetSize()
+    {
+        return (long)m_size;
+    }
+    virtual HRESULT GetTime(REFERENCE_TIME *pTimeStart, REFERENCE_TIME *pTimeEnd)
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT SetTime(REFERENCE_TIME *pTimeStart, REFERENCE_TIME *pTimeEnd)
+    {
+        return S_OK;
+    }
+    virtual HRESULT IsSyncPoint()
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT SetSyncPoint(BOOL bIsSyncPoint)
+    {
+        return S_OK;
+    }
+    virtual HRESULT IsPreroll()
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT SetPreroll(BOOL bIsPreroll)
+    {
+        return E_NOTIMPL;
+    }
+    virtual long GetActualDataLength()
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT SetActualDataLength(long __MIDL__IMediaSample0000)
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT GetMediaType(AM_MEDIA_TYPE **ppMediaType)
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT SetMediaType(AM_MEDIA_TYPE *pMediaType)
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT IsDiscontinuity()
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT SetDiscontinuity(BOOL bDiscontinuity)
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT GetMediaTime(LONGLONG *pTimeStart, LONGLONG *pTimeEnd)
+    {
+        return E_NOTIMPL;
+    }
+    virtual HRESULT SetMediaTime(LONGLONG *pTimeStart, LONGLONG *pTimeEnd)
+    {
+        return E_NOTIMPL;
+    }
+};
+
+TEST_F(SoftcamStream, CSourceStreamFillBuffer)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    SetUpSoftcamStream();
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+
+    std::vector<BYTE> buffer(320 * 240 * 3, 123);
+    MediaSampleMock media_sample(buffer.data(), buffer.size());
+    hr = m_stream->FillBuffer(&media_sample);
+    EXPECT_EQ( hr, NOERROR );
+    EXPECT_TRUE( std::all_of(buffer.begin(), buffer.end(),
+                             [](BYTE b) { return b == 0; }) );
+
+    std::vector<BYTE> TEST_INPUT(320 * 240 * 3);
+    for (int y = 0; y < 240; y++)
+    {
+        for (int x = 0; x < 320; x++)
+        {
+            TEST_INPUT[3 * (x + 320 * y) + 0] = BYTE((x + y * 2) % 256);
+        }
+    }
+    fb->write(TEST_INPUT.data());
+
+    hr = m_stream->FillBuffer(&media_sample);
+    EXPECT_EQ( hr, NOERROR );
+
+    int error_count = 0;
+    for (int y = 0; y < 240; y++)
+    {
+        const BYTE* actual = &buffer[3 * 320 * (239 - y)];
+        const BYTE* expected = &TEST_INPUT[3 * 320 * y];
+        if (0 != std::memcmp(actual, expected, 320 * 3))
+        {
+            error_count += 1;
+        }
+    }
+    EXPECT_EQ( error_count, 0 );
+}
+
 
 } //namespace
