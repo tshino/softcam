@@ -173,7 +173,7 @@ Softcam::Softcam(LPUNKNOWN lpunk, const GUID& clsid, HRESULT *phr) :
 {
     CAutoLock lock(&m_cStateLock);
 
-    m_paStreams = (CSourceStream **)new SoftcamStream*[1];
+    m_paStreams = new CSourceStream*[1];
     m_paStreams[0] = new SoftcamStream(phr, this, L"DirectShow Softcam Stream");
 }
 
