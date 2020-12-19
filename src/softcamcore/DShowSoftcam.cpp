@@ -464,7 +464,7 @@ STDMETHODIMP SoftcamStream::Notify(IBaseFilter * pSender, Quality q)
 {
     CAutoLock lock(&m_critsec);
     m_interval_time_msec = m_interval_time_msec * 1000 / (std::max)(q.Proportion, 1L);
-    m_interval_time_msec = (std::min)((std::max)(m_interval_time_msec, 10L), 1000L);
+    m_interval_time_msec = (std::min)((std::max)(m_interval_time_msec, 1L), 1000L);
     if (q.Late > 0) {
         m_sample_time += q.Late;
     }
@@ -529,7 +529,13 @@ HRESULT SoftcamStream::OnThreadCreate()
 {
     CAutoLock lock(&m_critsec);
     m_sample_time = 0;
-    m_interval_time_msec = 10;
+    float framerate = getParent()->framerate();
+    if (framerate <= 0.0f)
+    {
+        framerate = 60.0f;
+    }
+    framerate = (std::min)((std::max)(framerate, 1.0f), 1000.0f);
+    m_interval_time_msec = (long)std::round(1000.0f / framerate);
 
     LOG("-> NOERROR\n");
     return NOERROR;
