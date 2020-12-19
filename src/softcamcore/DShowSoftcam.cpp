@@ -450,8 +450,8 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
         }
 
         CAutoLock lock(&m_critsec);
-        CRefTime start = m_sample_time ;
-        m_sample_time += (LONG)m_interval_time;
+        CRefTime start = m_sample_time;
+        m_sample_time += (LONG)m_interval_time_msec;
         pms->SetTime((REFERENCE_TIME*)&start,(REFERENCE_TIME*)&m_sample_time);
     }
     pms->SetSyncPoint(TRUE);
@@ -463,8 +463,8 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
 STDMETHODIMP SoftcamStream::Notify(IBaseFilter * pSender, Quality q)
 {
     CAutoLock lock(&m_critsec);
-    m_interval_time = m_interval_time * 1000 / (std::max)(q.Proportion, 1L);
-    m_interval_time = (std::min)((std::max)(m_interval_time, 10), 1000);
+    m_interval_time_msec = m_interval_time_msec * 1000 / (std::max)(q.Proportion, 1L);
+    m_interval_time_msec = (std::min)((std::max)(m_interval_time_msec, 10L), 1000L);
     if (q.Late > 0) {
         m_sample_time += q.Late;
     }
@@ -529,7 +529,7 @@ HRESULT SoftcamStream::OnThreadCreate()
 {
     CAutoLock lock(&m_critsec);
     m_sample_time = 0;
-    m_interval_time = 10;
+    m_interval_time_msec = 10;
 
     LOG("-> NOERROR\n");
     return NOERROR;

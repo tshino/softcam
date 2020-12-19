@@ -92,7 +92,7 @@ private:
 
     CCritSec m_critsec;
     CRefTime m_sample_time;
-    int m_interval_time = 10;
+    long m_interval_time_msec = 10;
 
     Softcam*        getParent();
 };
