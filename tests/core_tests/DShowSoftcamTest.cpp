@@ -773,7 +773,7 @@ class MediaSampleMock : public CUnknown, public IMediaSample
     }
 };
 
-TEST_F(SoftcamStream, CSourceStreamFillBuffer)
+TEST_F(SoftcamStream, CSourceStreamFillBufferTimeouts)
 {
     auto fb = createFrameBufer(320, 240, 60);
     SetUpSoftcamStream();
@@ -782,10 +782,22 @@ TEST_F(SoftcamStream, CSourceStreamFillBuffer)
 
     std::vector<BYTE> buffer(320 * 240 * 3, 123);
     MediaSampleMock media_sample(buffer.data(), buffer.size());
+
     hr = m_stream->FillBuffer(&media_sample);
     EXPECT_EQ( hr, NOERROR );
     EXPECT_TRUE( std::all_of(buffer.begin(), buffer.end(),
                              [](BYTE b) { return b == 0; }) );
+}
+
+TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    SetUpSoftcamStream();
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+
+    std::vector<BYTE> buffer(320 * 240 * 3, 123);
+    MediaSampleMock media_sample(buffer.data(), buffer.size());
 
     std::vector<BYTE> TEST_INPUT(320 * 240 * 3);
     for (int y = 0; y < 240; y++)
