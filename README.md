@@ -25,6 +25,7 @@ for (;;)
 }
 ```
 .
+![Architecture](images/softcam_arch.png)
 
 ## How to build and run
 
