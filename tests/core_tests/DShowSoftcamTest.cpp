@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <thread>
 #include <algorithm>
 
 
@@ -796,33 +797,51 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
     ASSERT_NE( m_stream, nullptr );
     HRESULT hr;
 
-    std::vector<BYTE> buffer(320 * 240 * 3, 123);
-    MediaSampleMock media_sample(buffer.data(), buffer.size());
+    auto TEST_INPUT1 = [](int x, int y, int c)
+    {
+        return (x + y * 2 + c * 85) % 256;
+    };
 
-    std::vector<BYTE> TEST_INPUT(320 * 240 * 3);
+    std::thread th([&]
+    {
+        // Bottom-to-Top BGR image
+        std::vector<BYTE> buffer(320 * 240 * 3, 123);
+        MediaSampleMock media_sample(buffer.data(), buffer.size());
+
+        hr = m_stream->FillBuffer(&media_sample);
+        EXPECT_EQ( hr, NOERROR );
+
+        int error_count = 0;
+        for (int y = 0; y < 240; y++)
+        {
+            const BYTE* actual = &buffer[3 * 320 * (239 - y)];
+            for (int x = 0; x < 320; x++)
+            {
+                if (actual[x * 3 + 0] != TEST_INPUT1(x, y, 0) ||
+                    actual[x * 3 + 1] != TEST_INPUT1(x, y, 1) ||
+                    actual[x * 3 + 2] != TEST_INPUT1(x, y, 2))
+                {
+                    error_count += 1;
+                }
+            }
+        }
+        EXPECT_EQ( error_count, 0 );
+    });
+
+    // Top-to-Bottom BGR image
+    std::vector<BYTE> input(320 * 240 * 3);
     for (int y = 0; y < 240; y++)
     {
         for (int x = 0; x < 320; x++)
         {
-            TEST_INPUT[3 * (x + 320 * y) + 0] = BYTE((x + y * 2) % 256);
+            input[3 * (x + 320 * y) + 0] = (BYTE)TEST_INPUT1(x, y, 0);
+            input[3 * (x + 320 * y) + 1] = (BYTE)TEST_INPUT1(x, y, 1);
+            input[3 * (x + 320 * y) + 2] = (BYTE)TEST_INPUT1(x, y, 2);
         }
     }
-    fb->write(TEST_INPUT.data());
+    fb->write(input.data());
 
-    hr = m_stream->FillBuffer(&media_sample);
-    EXPECT_EQ( hr, NOERROR );
-
-    int error_count = 0;
-    for (int y = 0; y < 240; y++)
-    {
-        const BYTE* actual = &buffer[3 * 320 * (239 - y)];
-        const BYTE* expected = &TEST_INPUT[3 * 320 * y];
-        if (0 != std::memcmp(actual, expected, 320 * 3))
-        {
-            error_count += 1;
-        }
-    }
-    EXPECT_EQ( error_count, 0 );
+    th.join();
 }
 
 
