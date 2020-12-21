@@ -801,6 +801,10 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
     {
         return (x + y * 2 + c * 85) % 256;
     };
+    auto TEST_INPUT2 = [](int x, int y, int c)
+    {
+        return (x * 3 + y + c * 85) % 256;
+    };
 
     std::thread th([&]
     {
@@ -826,6 +830,25 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
             }
         }
         EXPECT_EQ( error_count, 0 );
+
+        hr = m_stream->FillBuffer(&media_sample);
+        EXPECT_EQ( hr, NOERROR );
+
+        error_count = 0;
+        for (int y = 0; y < 240; y++)
+        {
+            const BYTE* actual = &buffer[3 * 320 * (239 - y)];
+            for (int x = 0; x < 320; x++)
+            {
+                if (actual[x * 3 + 0] != TEST_INPUT2(x, y, 0) ||
+                    actual[x * 3 + 1] != TEST_INPUT2(x, y, 1) ||
+                    actual[x * 3 + 2] != TEST_INPUT2(x, y, 2))
+                {
+                    error_count += 1;
+                }
+            }
+        }
+        EXPECT_EQ( error_count, 0 );
     });
 
     // Top-to-Bottom BGR image
@@ -837,6 +860,17 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
             input[3 * (x + 320 * y) + 0] = (BYTE)TEST_INPUT1(x, y, 0);
             input[3 * (x + 320 * y) + 1] = (BYTE)TEST_INPUT1(x, y, 1);
             input[3 * (x + 320 * y) + 2] = (BYTE)TEST_INPUT1(x, y, 2);
+        }
+    }
+    fb->write(input.data());
+
+    for (int y = 0; y < 240; y++)
+    {
+        for (int x = 0; x < 320; x++)
+        {
+            input[3 * (x + 320 * y) + 0] = (BYTE)TEST_INPUT2(x, y, 0);
+            input[3 * (x + 320 * y) + 1] = (BYTE)TEST_INPUT2(x, y, 1);
+            input[3 * (x + 320 * y) + 2] = (BYTE)TEST_INPUT2(x, y, 2);
         }
     }
     fb->write(input.data());
