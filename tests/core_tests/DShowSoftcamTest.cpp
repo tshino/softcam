@@ -878,5 +878,41 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
     th.join();
 }
 
+TEST_F(SoftcamStream, CSourceStreamGetMediaTypeNoServer)
+{
+    SetUpSoftcamStream();
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+
+    CMediaType mt;
+    hr = m_stream->GetMediaType(&mt);
+    EXPECT_EQ( hr, E_FAIL );
+}
+
+TEST_F(SoftcamStream, CSourceStreamGetMediaTypeNullPointer)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    SetUpSoftcamStream();
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+
+    hr = m_stream->GetMediaType(nullptr);
+    EXPECT_EQ( hr, E_POINTER );
+}
+
+TEST_F(SoftcamStream, CSourceStreamGetMediaTypeNormal)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    SetUpSoftcamStream();
+    ASSERT_NE( m_stream, nullptr );
+    HRESULT hr;
+
+    CMediaType mt;
+    hr = m_stream->GetMediaType(&mt);
+    EXPECT_EQ( hr, NOERROR );
+
+    checkMediaType320x240(&mt);
+}
+
 
 } //namespace
