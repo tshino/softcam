@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <atomic>
 #include <thread>
 #include <algorithm>
 
@@ -806,6 +807,8 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
         return (x * 3 + y + c * 85) % 256;
     };
 
+    std::atomic<int> pos = 0;
+
     std::thread th([&]
     {
         // Bottom-to-Top BGR image
@@ -830,6 +833,8 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
             }
         }
         EXPECT_EQ( error_count, 0 );
+
+        pos = 1;
 
         hr = m_stream->FillBuffer(&media_sample);
         EXPECT_EQ( hr, NOERROR );
@@ -863,6 +868,8 @@ TEST_F(SoftcamStream, CSourceStreamFillBufferNormal)
         }
     }
     fb->write(input.data());
+
+    while (pos != 1) { sc::Timer::sleep(0.001f); }
 
     for (int y = 0; y < 240; y++)
     {
