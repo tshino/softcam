@@ -708,68 +708,68 @@ class MediaSampleMock : public CUnknown, public IMediaSample
 
     DECLARE_IUNKNOWN
 
-    virtual HRESULT GetPointer(BYTE **ppBuffer)
+    virtual HRESULT GetPointer(BYTE **ppBuffer) override
     {
         *ppBuffer = m_ptr;
         return S_OK;
     }
-    virtual long GetSize()
+    virtual long GetSize() override
     {
         return (long)m_size;
     }
-    virtual HRESULT GetTime(REFERENCE_TIME *pTimeStart, REFERENCE_TIME *pTimeEnd)
+    virtual HRESULT GetTime(REFERENCE_TIME *pTimeStart, REFERENCE_TIME *pTimeEnd) override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT SetTime(REFERENCE_TIME *pTimeStart, REFERENCE_TIME *pTimeEnd)
+    virtual HRESULT SetTime(REFERENCE_TIME *pTimeStart, REFERENCE_TIME *pTimeEnd) override
     {
         return S_OK;
     }
-    virtual HRESULT IsSyncPoint()
+    virtual HRESULT IsSyncPoint() override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT SetSyncPoint(BOOL bIsSyncPoint)
+    virtual HRESULT SetSyncPoint(BOOL bIsSyncPoint) override
     {
         return S_OK;
     }
-    virtual HRESULT IsPreroll()
+    virtual HRESULT IsPreroll() override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT SetPreroll(BOOL bIsPreroll)
+    virtual HRESULT SetPreroll(BOOL bIsPreroll) override
     {
         return E_NOTIMPL;
     }
-    virtual long GetActualDataLength()
+    virtual long GetActualDataLength() override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT SetActualDataLength(long __MIDL__IMediaSample0000)
+    virtual HRESULT SetActualDataLength(long __MIDL__IMediaSample0000) override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT GetMediaType(AM_MEDIA_TYPE **ppMediaType)
+    virtual HRESULT GetMediaType(AM_MEDIA_TYPE **ppMediaType) override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT SetMediaType(AM_MEDIA_TYPE *pMediaType)
+    virtual HRESULT SetMediaType(AM_MEDIA_TYPE *pMediaType) override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT IsDiscontinuity()
+    virtual HRESULT IsDiscontinuity() override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT SetDiscontinuity(BOOL bDiscontinuity)
+    virtual HRESULT SetDiscontinuity(BOOL bDiscontinuity) override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT GetMediaTime(LONGLONG *pTimeStart, LONGLONG *pTimeEnd)
+    virtual HRESULT GetMediaTime(LONGLONG *pTimeStart, LONGLONG *pTimeEnd) override
     {
         return E_NOTIMPL;
     }
-    virtual HRESULT SetMediaTime(LONGLONG *pTimeStart, LONGLONG *pTimeEnd)
+    virtual HRESULT SetMediaTime(LONGLONG *pTimeStart, LONGLONG *pTimeEnd) override
     {
         return E_NOTIMPL;
     }
