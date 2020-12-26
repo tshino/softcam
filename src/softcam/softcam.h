@@ -38,12 +38,12 @@ extern "C"
     scCamera    scCreateCamera(int width, int height, float framerate = 60.0f);
 
     /*
-        This function deletes a virtual camera instance.
+        This function deletes the specified virtual camera instance.
     */
     void        scDeleteCamera(scCamera camera);
 
     /*
-        This function sends a new frame of a virtual camera.
+        This function sends a new frame of the specified virtual camera.
 
         If the framerate set to the virtual camera is not zero, this
         function tries to make the timing to deliver the new image ideal
@@ -58,7 +58,8 @@ extern "C"
     void        scSendFrame(scCamera camera, const void* image_bits);
 
     /*
-        This function waits for an application to connect to a virtual camera.
+        This function waits until an application connects to the specified
+        virtual camera.
 
         If the `timeout` argument is greater than 0, this function timeouts
         after the specified time if no application accesses the virtual camera.
