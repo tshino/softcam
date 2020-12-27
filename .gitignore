@@ -2,3 +2,4 @@
 *.vcxproj.user
 x64/
 /packages/
+/dist/

@@ -58,6 +58,23 @@
       <ModuleDefinitionFile>softcam.def</ModuleDefinitionFile>
       <AdditionalDependencies>winmm.lib;msvcrtd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>@if not exist $(SolutionDir)dist mkdir $(SolutionDir)dist
+@if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
+@if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
+@if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@echo softcam.h
+@copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
+@echo softcam.lib
+@copy /y $(OutDir)softcam.lib $(SolutionDir)dist\lib
+@echo softcam.dll
+@copy /y $(OutDir)softcam.dll $(SolutionDir)dist\bin
+</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Creating dist directory and copying the header and binaries into it.</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -77,6 +94,23 @@
       <ModuleDefinitionFile>softcam.def</ModuleDefinitionFile>
       <AdditionalDependencies>winmm.lib;msvcrt.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>@if not exist $(SolutionDir)dist mkdir $(SolutionDir)dist
+@if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
+@if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
+@if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@echo softcam.h
+@copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
+@echo softcam.lib
+@copy /y $(OutDir)softcam.lib $(SolutionDir)dist\lib
+@echo softcam.dll
+@copy /y $(OutDir)softcam.dll $(SolutionDir)dist\bin
+</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Creating dist directory and copying the header and binaries into it.</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="softcam.cpp" />
