@@ -64,12 +64,14 @@
 @if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
 @if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
 @if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if "$(Configuration)" == "Debug" (set LIB_SUFFIX=d) else (set LIB_SUFFIX=)
+@set LIB_NAME=$(TargetName)%LIB_SUFFIX%
 @echo softcam.h
 @copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
-@echo softcam.lib
-@copy /y $(OutDir)softcam.lib $(SolutionDir)dist\lib
-@echo softcam.dll
-@copy /y $(OutDir)softcam.dll $(SolutionDir)dist\bin
+@echo %LIB_NAME%.lib
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\%LIB_NAME%.lib
+@echo %LIB_NAME%.dll
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\%LIB_NAME%.dll
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -100,12 +102,14 @@
 @if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
 @if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
 @if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if "$(Configuration)" == "Debug" (set LIB_SUFFIX=d) else (set LIB_SUFFIX=)
+@set LIB_NAME=$(TargetName)%LIB_SUFFIX%
 @echo softcam.h
 @copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
-@echo softcam.lib
-@copy /y $(OutDir)softcam.lib $(SolutionDir)dist\lib
-@echo softcam.dll
-@copy /y $(OutDir)softcam.dll $(SolutionDir)dist\bin
+@echo %LIB_NAME%.lib
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\%LIB_NAME%.lib
+@echo %LIB_NAME%.dll
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\%LIB_NAME%.dll
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>
