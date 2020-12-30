@@ -1,7 +1,7 @@
 @echo off
 
 set INSTALLER=x64\Release\softcam_installer.exe
-set TARGET=..\..\x64\Release\softcam.dll
+set TARGET=..\..\dist\bin\softcam.dll
 
 echo ##############################################################
 echo Softcam Installer (softcam_installer.exe) will install Softcam
