@@ -17,6 +17,10 @@ const unsigned long SHMEM_SIZE = 888;
 const char SOME_DATA[] = "Hello, world!";
 const char ANOTHER_DATA[] = "12345";
 
+#define WAIT_FOR(expr) [&]{ \
+            while (!(expr)) { sc::Timer::sleep(0.01f); } \
+        }()
+
 
 TEST(Timer, Basic1) {
     sc::Timer timer;
@@ -88,25 +92,25 @@ TEST(NamedMutex, Basic)
         sc::NamedMutex mutex(MUTEX_NAME);
         mutex.lock();
         signal = 1;
-        while (signal < 3) sc::Timer::sleep(0.01f);
+        WAIT_FOR( signal >= 3 );
         mutex.unlock();
     });
     std::thread th2([&]
     {
         sc::NamedMutex mutex(MUTEX_NAME);
-        while (signal < 2) sc::Timer::sleep(0.01f);
+        WAIT_FOR( signal >= 2 );
         mutex.lock();
         signal = 4;
         mutex.unlock();
     });
 
-    while (signal < 1) sc::Timer::sleep(0.01f);
+    WAIT_FOR( signal >= 1 );
     EXPECT_EQ( signal.load(), 1 );
     signal = 2;
     sc::Timer::sleep(0.1f);
     EXPECT_EQ( signal.load(), 2 );
     signal = 3;
-    while (signal < 4) sc::Timer::sleep(0.01f);
+    WAIT_FOR( signal >= 4 );
     EXPECT_EQ( signal.load(), 4 );
 
     th1.join();
