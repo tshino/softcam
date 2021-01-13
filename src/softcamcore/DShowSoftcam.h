@@ -21,10 +21,10 @@ public:
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, __deref_out void **ppv) override;
 
     // IAMStreamConfig
-    HRESULT SetFormat(AM_MEDIA_TYPE *mt) override;
-    HRESULT GetFormat(AM_MEDIA_TYPE **out_pmt) override;
-    HRESULT GetNumberOfCapabilities(int *out_count, int *out_size) override;
-    HRESULT GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc) override;
+    HRESULT STDMETHODCALLTYPE SetFormat(AM_MEDIA_TYPE *mt) override;
+    HRESULT STDMETHODCALLTYPE GetFormat(AM_MEDIA_TYPE **out_pmt) override;
+    HRESULT STDMETHODCALLTYPE GetNumberOfCapabilities(int *out_count, int *out_size) override;
+    HRESULT STDMETHODCALLTYPE GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc) override;
 
     FrameBuffer*    getFrameBuffer();
     bool            valid() const { return m_valid; }
@@ -68,20 +68,20 @@ class SoftcamStream : public CSourceStream, public IKsPropertySet, public IAMStr
     HRESULT OnThreadCreate(void) override;
 
     //  IKsPropertySet
-    HRESULT Set(REFGUID guidPropSet, DWORD dwPropID,
-                LPVOID pInstanceData, DWORD cbInstanceData,
-                LPVOID pPropData, DWORD cbPropData) override;
-    HRESULT Get(REFGUID guidPropSet, DWORD dwPropID,
-                LPVOID pInstanceData, DWORD cbInstanceData,
-                LPVOID pPropData, DWORD cbPropData, DWORD *pcbReturned) override;
-    HRESULT QuerySupported(REFGUID guidPropSet, DWORD dwPropID,
-                           DWORD *pTypeSupport) override;
+    HRESULT STDMETHODCALLTYPE Set(REFGUID guidPropSet, DWORD dwPropID,
+                                  LPVOID pInstanceData, DWORD cbInstanceData,
+                                  LPVOID pPropData, DWORD cbPropData) override;
+    HRESULT STDMETHODCALLTYPE Get(REFGUID guidPropSet, DWORD dwPropID,
+                                  LPVOID pInstanceData, DWORD cbInstanceData,
+                                  LPVOID pPropData, DWORD cbPropData, DWORD *pcbReturned) override;
+    HRESULT STDMETHODCALLTYPE QuerySupported(REFGUID guidPropSet, DWORD dwPropID,
+                                             DWORD *pTypeSupport) override;
 
     // IAMStreamConfig
-    HRESULT SetFormat(AM_MEDIA_TYPE *mt) override;
-    HRESULT GetFormat(AM_MEDIA_TYPE **out_pmt) override;
-    HRESULT GetNumberOfCapabilities(int *out_count, int *out_size) override;
-    HRESULT GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc) override;
+    HRESULT STDMETHODCALLTYPE SetFormat(AM_MEDIA_TYPE *mt) override;
+    HRESULT STDMETHODCALLTYPE GetFormat(AM_MEDIA_TYPE **out_pmt) override;
+    HRESULT STDMETHODCALLTYPE GetNumberOfCapabilities(int *out_count, int *out_size) override;
+    HRESULT STDMETHODCALLTYPE GetStreamCaps(int index, AM_MEDIA_TYPE **out_pmt, BYTE *out_scc) override;
 
 private:
     const bool  m_valid;
