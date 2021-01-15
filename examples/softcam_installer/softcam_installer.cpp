@@ -63,7 +63,7 @@ int WINAPI WinMain(
     if (cmd == "register")
     {
         auto hmod = LoadDLL(path);
-        auto RegisterServer = GetProc<HRESULT()>(hmod, "DllRegisterServer");
+        auto RegisterServer = GetProc<HRESULT STDAPICALLTYPE()>(hmod, "DllRegisterServer");
 
         auto hr = RegisterServer();
 
@@ -79,7 +79,7 @@ int WINAPI WinMain(
     else if (cmd == "unregister")
     {
         auto hmod = LoadDLL(path);
-        auto UnregisterServer = GetProc<HRESULT()>(hmod, "DllUnregisterServer");
+        auto UnregisterServer = GetProc<HRESULT STDAPICALLTYPE()>(hmod, "DllUnregisterServer");
 
         auto hr = UnregisterServer();
 
