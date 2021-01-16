@@ -360,7 +360,7 @@ TEST_F(Softcam, IAMStreamConfigNormal)
     hr = amsc->GetNumberOfCapabilities(&count, &size);
     EXPECT_EQ( hr, S_OK );
     EXPECT_EQ( count, 1 );
-    EXPECT_GE( size, sizeof(VIDEO_STREAM_CONFIG_CAPS) );
+    EXPECT_GE( size, (int)sizeof(VIDEO_STREAM_CONFIG_CAPS) );
 
     size = (std::max)((int)sizeof(VIDEO_STREAM_CONFIG_CAPS), size);
     std::unique_ptr<BYTE[]> scc(new BYTE[size]);
@@ -684,7 +684,7 @@ TEST_F(SoftcamStream, IAMStreamConfigNormal)
     hr = amsc->GetNumberOfCapabilities(&count, &size);
     EXPECT_EQ( hr, S_OK );
     EXPECT_EQ( count, 1 );
-    EXPECT_GE( size, sizeof(VIDEO_STREAM_CONFIG_CAPS) );
+    EXPECT_GE( size, (int)sizeof(VIDEO_STREAM_CONFIG_CAPS) );
 
     size = (std::max)((int)sizeof(VIDEO_STREAM_CONFIG_CAPS), size);
     std::unique_ptr<BYTE[]> scc(new BYTE[size]);
