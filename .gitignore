@@ -1,5 +1,6 @@
 .vs/
 *.vcxproj.user
 x64/
+Win32/
 /packages/
 /dist/

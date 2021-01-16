@@ -3,9 +3,14 @@
 All notable changes to the Softcam library will be documented in this file.
 
 ### [Unreleased]
+- Added support for 32-bit camera applications [#3](https://github.com/tshino/softcam/issues/3).
+    - To support both 32-bit and 64-bit camera applications, each of the DLL `softcam.dll` of both modes must be built and installed to the system.
+    - Once both DLLs are installed in the system, no matter the mode in which your application is built and which type of camera applications access to the virtual camera, they can communicate and the images are streamed between them correctly.
 - Changed the layout of the `dist` directory:
-    - `dist/bin` -> `dist/bin/x64`
-    - `dist/lib` -> `dist/lib/x64`
+    - `dist/bin/x64`   <- `dist/bin`
+    - `dist/lib/x64`   <- `dist/lib`
+    - `dist/bin/Win32` (NEW)
+    - `dist/lib/Win32` (NEW)
 - Fixed an issue on Debug DLL name confusion.
     - The example program `sender.exe` with `Debug` configuration was failing to run because the import library `softcamd.lib` wrongly tries to find `softcam.dll` (not `softcamd.dll`).
     - Now the import library is fixed to use `softcamd.dll` correctly.
