@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release, Debug]
+        platform: [x64]
 
     runs-on: windows-latest
 
@@ -28,12 +29,12 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{matrix.configuration}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
 
     - name: Core Tests
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: x64/${{matrix.configuration}}/core_tests.exe
+      run: ${{matrix.platform}}/${{matrix.configuration}}/core_tests.exe
 
     - name: Dll Tests
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: x64/${{matrix.configuration}}/dll_tests.exe
+      run: ${{matrix.platform}}/${{matrix.configuration}}/dll_tests.exe
