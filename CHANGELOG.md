@@ -3,6 +3,9 @@
 All notable changes to the Softcam library will be documented in this file.
 
 ### [Unreleased]
+- Changed the layout of the `dist` directory:
+    - `dist/bin` -> `dist/bin/x64`
+    - `dist/lib` -> `dist/lib/x64`
 - Fixed an issue on Debug DLL name confusion.
     - The example program `sender.exe` with `Debug` configuration was failing to run because the import library `softcamd.lib` wrongly tries to find `softcam.dll` (not `softcamd.dll`).
     - Now the import library is fixed to use `softcamd.dll` correctly.

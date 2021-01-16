@@ -66,13 +66,15 @@
 @if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
 @if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
 @if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\lib\$(Platform) mkdir $(SolutionDir)dist\lib\$(Platform)
 @if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if not exist $(SolutionDir)dist\bin\$(Platform) mkdir $(SolutionDir)dist\bin\$(Platform)
 @echo softcam.h -^&gt; ...dist\include\softcam\
 @copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
-@echo $(TargetName).lib -^&gt; ...dist\lib\
-@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(TargetName).lib
-@echo $(TargetName).dll -^&gt; ...dist\bin\
-@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(TargetName).dll
+@echo $(TargetName).lib -^&gt; ...dist\lib\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(Platform)
+@echo $(TargetName).dll -^&gt; ...dist\bin\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(Platform)
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -102,13 +104,15 @@
 @if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
 @if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
 @if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\lib\$(Platform) mkdir $(SolutionDir)dist\lib\$(Platform)
 @if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if not exist $(SolutionDir)dist\bin\$(Platform) mkdir $(SolutionDir)dist\bin\$(Platform)
 @echo softcam.h -^&gt; ...dist\include\softcam\
 @copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
-@echo $(TargetName).lib -^&gt; ...dist\lib\
-@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(TargetName).lib
-@echo $(TargetName).dll -^&gt; ...dist\bin\
-@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(TargetName).dll
+@echo $(TargetName).lib -^&gt; ...dist\lib\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(Platform)
+@echo $(TargetName).dll -^&gt; ...dist\bin\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(Platform)
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>

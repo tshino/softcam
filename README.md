@@ -36,7 +36,7 @@ Following software is required.
 
 Open `softcam.sln`, choose configuration `Release`, and build the solution.
 
-If it successfully builds, you will get the DLL `softcam.dll` in the `dist/bin` directory.
+If it successfully builds, you will get the DLL `softcam.dll` in the `dist/bin/x64` directory.
 The header and the import libraries will also be put into the `dist` directory.
 
 
