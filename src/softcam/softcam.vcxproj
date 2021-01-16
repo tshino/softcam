@@ -15,6 +15,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{52968d29-aa5f-41a4-bf1e-4c50f1098373}</ProjectGuid>
     <RootNamespace>softcam</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -39,7 +40,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -64,14 +67,12 @@
 @if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
 @if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
 @if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
-@if "$(Configuration)" == "Debug" (set LIB_SUFFIX=d) else (set LIB_SUFFIX=)
-@set LIB_NAME=$(TargetName)%LIB_SUFFIX%
 @echo softcam.h -^&gt; ...dist\include\softcam\
 @copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
-@echo %LIB_NAME%.lib -^&gt; ...dist\lib\
-@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\%LIB_NAME%.lib
-@echo %LIB_NAME%.dll -^&gt; ...dist\bin\
-@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\%LIB_NAME%.dll
+@echo $(TargetName).lib -^&gt; ...dist\lib\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(TargetName).lib
+@echo $(TargetName).dll -^&gt; ...dist\bin\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(TargetName).dll
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -102,14 +103,12 @@
 @if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
 @if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
 @if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
-@if "$(Configuration)" == "Debug" (set LIB_SUFFIX=d) else (set LIB_SUFFIX=)
-@set LIB_NAME=$(TargetName)%LIB_SUFFIX%
 @echo softcam.h -^&gt; ...dist\include\softcam\
 @copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
-@echo %LIB_NAME%.lib -^&gt; ...dist\lib\
-@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\%LIB_NAME%.lib
-@echo %LIB_NAME%.dll -^&gt; ...dist\bin\
-@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\%LIB_NAME%.dll
+@echo $(TargetName).lib -^&gt; ...dist\lib\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(TargetName).lib
+@echo $(TargetName).dll -^&gt; ...dist\bin\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(TargetName).dll
 </Command>
     </PostBuildEvent>
     <PostBuildEvent>
