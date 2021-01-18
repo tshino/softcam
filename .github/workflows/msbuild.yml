@@ -25,7 +25,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Build
+    - name: Build Libraries
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
@@ -38,3 +38,11 @@ jobs:
     - name: Dll Tests
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: ${{matrix.platform}}/${{matrix.configuration}}/dll_tests.exe
+
+    - name: Build Example sender
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ./examples/sender/sender.sln
+
+    - name: Build Example softcam_installer
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ./examples/softcam_installer/softcam_installer.sln
