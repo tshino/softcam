@@ -65,7 +65,8 @@ Before you run the demo you need to install the library to your system so that c
 
 To see the video stream which is being produced by the `sender.exe`, you can use any camera application. If you don't have a preference at this moment, I recommend you to try my web application `Compare` ([https://tshino.github.io/compare/compare.html](https://tshino.github.io/compare/compare.html)). This is an image comparison tool written in JavaScript, and it has the capability of taking a capture from a webcam. Open the above link, find the camera icon appears on the sidebar, and click it. If it shows a different camera image or fails to connect to the camera, you may need to look at the settings of your browser. In most browsers, a camera icon appears on the address bar, which is a shortcut to the camera settings. Make sure to let the browser use the virtual camera named '`DirectShow Softcam`'. If it doesn't appear in the list of available cameras, try to reboot the browser (or Windows).
 
-Note: To support both 32-bit and 64-bit camera applications, each of the DLL `softcam.dll` of both modes must be built and installed to the system. Once both DLLs are installed in the system, no matter the mode in which your application is built and which type of camera applications access to the virtual camera, they can communicate and the images are streamed between them correctly.
+Note: To support both 32-bit and 64-bit camera applications, each of the DLL `softcam.dll` of both modes must be built and installed. Once both DLLs are installed in a system, no matter which one your application links to or which one the camera application accesses to, they can communicate and the images are streamed between them correctly.
+
 
 ## License
 
