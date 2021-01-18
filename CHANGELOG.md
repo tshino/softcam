@@ -2,7 +2,7 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
-### [Unreleased]
+### [1.2] - 2021-01-18
 - Added support for 32-bit camera applications [#3](https://github.com/tshino/softcam/issues/3).
     - To support both 32-bit and 64-bit camera applications, each of the DLL `softcam.dll` of both modes must be built and installed.
     - Once both DLLs are installed in a system, no matter which one your application links to or which one the camera application accesses to, they can communicate and the images are streamed between them correctly.
