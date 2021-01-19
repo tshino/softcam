@@ -1,7 +1,6 @@
 #include "SenderAPI.h"
 
-#include <mutex>
-#include <memory>
+#include <atomic>
 
 #include "FrameBuffer.h"
 #include "Misc.h"
@@ -15,8 +14,7 @@ struct Camera
     softcam::Timer          m_timer;
 };
 
-std::mutex              s_mutex;
-std::unique_ptr<Camera> s_camera;
+std::atomic<Camera*>    s_camera;
 
 } //namespace
 
@@ -26,38 +24,36 @@ namespace sender {
 
 CameraHandle    CreateCamera(int width, int height, float framerate)
 {
-    std::lock_guard<std::mutex> lock(s_mutex);
-
-    if (!s_camera)
+    if (auto fb = FrameBuffer::create(width, height, framerate))
     {
-        if (auto fb = FrameBuffer::create(width, height, framerate))
+        Camera* camera = new Camera{ fb, Timer() };
+        Camera* expected = nullptr;
+        if (s_camera.compare_exchange_strong(expected, camera))
         {
-            s_camera.reset(new Camera{ fb, Timer() });
-            return fb.handle();
+            return camera;
         }
+        delete camera;
     }
     return nullptr;
 }
 
 void            DeleteCamera(CameraHandle camera)
 {
-    std::lock_guard<std::mutex> lock(s_mutex);
-
-    if (s_camera && s_camera->m_frame_buffer.handle() == camera)
+    Camera* target = static_cast<Camera*>(camera);
+    if (target && s_camera.compare_exchange_strong(target, nullptr))
     {
-        s_camera->m_frame_buffer.deactivate();
-        s_camera.reset();
+        target->m_frame_buffer.deactivate();
+        delete target;
     }
 }
 
 void            SendFrame(CameraHandle camera, const void* image_bits)
 {
-    std::lock_guard<std::mutex> lock(s_mutex);
-
-    if (s_camera && s_camera->m_frame_buffer.handle() == camera)
+    Camera* target = static_cast<Camera*>(camera);
+    if (target && s_camera.load() == target)
     {
-        auto framerate = s_camera->m_frame_buffer.framerate();
-        auto frame_counter = s_camera->m_frame_buffer.frameCounter();
+        auto framerate = target->m_frame_buffer.framerate();
+        auto frame_counter = target->m_frame_buffer.frameCounter();
 
         // To deliver frames in the regular period, we sleep here a bit
         // before we deliver the new frame if it's not the time yet.
@@ -70,33 +66,32 @@ void            SendFrame(CameraHandle camera, const void* image_bits)
         if (0.0f < framerate && 0 < frame_counter)
         {
             auto ref_delta = 1.0f / framerate;
-            auto time = s_camera->m_timer.get();
+            auto time = target->m_timer.get();
             if (time < ref_delta)
             {
                 Timer::sleep(ref_delta - time);
             }
             if (time < ref_delta * 1.5f)
             {
-                s_camera->m_timer.rewind(ref_delta);
+                target->m_timer.rewind(ref_delta);
             }
             else
             {
-                s_camera->m_timer.reset();
+                target->m_timer.reset();
             }
         }
 
-        s_camera->m_frame_buffer.write(image_bits);
+        target->m_frame_buffer.write(image_bits);
     }
 }
 
 bool            WaitForConnection(CameraHandle camera, float timeout)
 {
-    std::lock_guard<std::mutex> lock(s_mutex);
-
-    if (s_camera && s_camera->m_frame_buffer.handle() == camera)
+    Camera* target = static_cast<Camera*>(camera);
+    if (target && s_camera.load() == target)
     {
         Timer timer;
-        while (!s_camera->m_frame_buffer.connected())
+        while (!target->m_frame_buffer.connected())
         {
             if (0.0f < timeout && timeout <= timer.get())
             {
