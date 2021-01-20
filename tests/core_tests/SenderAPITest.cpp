@@ -1,10 +1,12 @@
 #include <softcamcore/SenderAPI.h>
 #include <gtest/gtest.h>
 
-#include <softcamcore/FrameBuffer.h>
 #include <atomic>
 #include <thread>
 #include <chrono>
+#include <cmath>
+#include <softcamcore/FrameBuffer.h>
+#include <softcamcore/Misc.h>
 
 
 namespace {
@@ -126,6 +128,60 @@ TEST(SenderSendFrame, Basic)
     th.join();
     sender::DeleteCamera(handle);
 }
+
+TEST(SenderSendFrame, ShouldSendFirstFrameImmediately)
+{
+    auto handle = sender::CreateCamera(320, 240);
+    unsigned char image[320 * 240 * 3] = {};
+
+    sc::Timer timer;
+    sender::SendFrame(handle, image);   // first
+    auto lap = timer.get();
+
+    EXPECT_LE( lap, 0.002f );
+
+    sender::DeleteCamera(handle);
+}
+
+TEST(SenderSendFrame, ShouldSendSecondFrameAfterRightPeriod)
+{
+    const float FRAMERATE = 60.0f;
+    auto handle = sender::CreateCamera(320, 240, FRAMERATE);
+    unsigned char image[320 * 240 * 3] = {};
+
+    sender::SendFrame(handle, image);   // first
+
+    sc::Timer timer;
+    sender::SendFrame(handle, image);   // second
+    auto lap = timer.get();
+
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+
+    sender::DeleteCamera(handle);
+}
+
+#if 0
+TEST(SenderSendFrame, ShouldSendSecondFrameAfterRightPeriodEvenIfFirstFrameDelayed)
+{
+    const float FRAMERATE = 60.0f;
+    auto handle = sender::CreateCamera(320, 240, FRAMERATE);
+    unsigned char image[320 * 240 * 3] = {};
+
+    SLEEP(10);  // delay
+
+    sender::SendFrame(handle, image);   // first
+
+    sc::Timer timer;
+    sender::SendFrame(handle, image);   // second
+    auto lap = timer.get();
+
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+
+    sender::DeleteCamera(handle);
+}
+#endif
 
 TEST(SenderWaitForConnection, ShouldBlockUntilReceiverConnected)
 {
