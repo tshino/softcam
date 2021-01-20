@@ -42,13 +42,13 @@ The header and the import libraries will also be put into the `dist` directory.
 Note: The DLL `softcam.dll` built above is a 64-bit DLL file. In order to support 32-bit camera applications as well, you should build 32-bit `softcam.dll` too by choosing the platform `Win32`. The 32-bit DLL file will be put in the `dist/bin/Win32` directory.
 
 
-## Examples
+## Demo
 
-There are two examples in the `examples` directory.
-One is for installation/uninstallation of the library to users' systems.
-The other is a demo of the usage of this library.
+There are two essential example programs in the `examples` directory.
+One is a demo (named `sender`) for simple usage of this library.
+The other is a program (named `softcam_installer`) for installation/uninstallation of this library to user's systems.
 
-Before you run the demo you need to install the library to your system so that camera applications can detect it. So you need to build and run both examples. The steps are as follows.
+Before running the demo you need to install the library to your system so that camera applications can detect it. So you need to build and run both examples. The steps are as follows.
 
 1. Open `examples/softcam_installer/softcam_installer.sln`, choose configuration `Release` and the platform `x64`, and build the solution.
     - You will get `softcam_installer.exe` in `examples/softcam_installer/x64/Release` directory.
