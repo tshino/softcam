@@ -6,6 +6,7 @@ All notable changes to the Softcam library will be documented in this file.
 - Fixed an issue on Debug DLL that was making an assertion failure when a console program that uses the DLL stops by pressing Ctrl+C.
     - The cause was a global destructor of a std::mutex object in softcam.dll. The destructor claimed that the mutex object is still locked. That happens because when Ctrl+C has pressed the whole program execution stops immediately no matter the state of mutex objects and then the global destructors are invoked after that.
     - This fix removes unnecessary global destructors to avoid such a scenario.
+- Improved accuracy of timing control.
 
 
 ### [1.2] - 2021-01-18
@@ -25,7 +26,7 @@ All notable changes to the Softcam library will be documented in this file.
 ### [1.1] - 2021-01-02
 - Added PostBuildEvent which makes the `dist` directory that holds the header and the binaries.
 - Changed the build configuration of examples to use the `dist` directory and made them independent of the library's build.
-- Improved timing calculation.
+- Improved accuracy of timing calculation.
 - Added a figure on top of the README.
 
 

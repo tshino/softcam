@@ -143,7 +143,7 @@ TEST(SenderSendFrame, ShouldSendFirstFrameImmediately)
     sender::DeleteCamera(handle);
 }
 
-TEST(SenderSendFrame, ShouldSendSecondFrameAfterRightPeriod)
+TEST(SenderSendFrame, ShouldKeepProperInterval)
 {
     const float FRAMERATE = 60.0f;
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
@@ -158,11 +158,17 @@ TEST(SenderSendFrame, ShouldSendSecondFrameAfterRightPeriod)
     EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
     EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
 
+    timer.reset();
+    sender::SendFrame(handle, image);   // third
+    lap = timer.get();
+
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+
     sender::DeleteCamera(handle);
 }
 
-#if 0
-TEST(SenderSendFrame, ShouldSendSecondFrameAfterRightPeriodEvenIfFirstFrameDelayed)
+TEST(SenderSendFrame, ShouldKeepProperIntervalEvenIfFirstFrameDelayed)
 {
     const float FRAMERATE = 60.0f;
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
@@ -179,9 +185,15 @@ TEST(SenderSendFrame, ShouldSendSecondFrameAfterRightPeriodEvenIfFirstFrameDelay
     EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
     EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
 
+    timer.reset();
+    sender::SendFrame(handle, image);   // third
+    lap = timer.get();
+
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+
     sender::DeleteCamera(handle);
 }
-#endif
 
 TEST(SenderWaitForConnection, ShouldBlockUntilReceiverConnected)
 {

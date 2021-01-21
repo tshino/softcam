@@ -63,21 +63,28 @@ void            SendFrame(CameraHandle camera, const void* image_bits)
         // However if the delay grew too much (greater than 50 percent
         // of the period), we reset the timer to avoid continuing
         // irregular delivery.
-        if (0.0f < framerate && 0 < frame_counter)
+        if (0.0f < framerate)
         {
-            auto ref_delta = 1.0f / framerate;
-            auto time = target->m_timer.get();
-            if (time < ref_delta)
+            if (0 == frame_counter) // the first frame
             {
-                Timer::sleep(ref_delta - time);
-            }
-            if (time < ref_delta * 1.5f)
-            {
-                target->m_timer.rewind(ref_delta);
+                target->m_timer.reset();
             }
             else
             {
-                target->m_timer.reset();
+                auto ref_delta = 1.0f / framerate;
+                auto time = target->m_timer.get();
+                if (time < ref_delta)
+                {
+                    Timer::sleep(ref_delta - time);
+                }
+                if (time < ref_delta * 1.5f)
+                {
+                    target->m_timer.rewind(ref_delta);
+                }
+                else
+                {
+                    target->m_timer.reset();
+                }
             }
         }
 
