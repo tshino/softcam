@@ -155,7 +155,7 @@ TEST(SenderSendFrame, ShouldSendFirstFrameImmediately)
 
 TEST(SenderSendFrame, ShouldKeepProperInterval)
 {
-    const float FRAMERATE = 60.0f;
+    const float FRAMERATE = 20.0f;
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
     unsigned char image[320 * 240 * 3] = {};
 
@@ -165,26 +165,26 @@ TEST(SenderSendFrame, ShouldKeepProperInterval)
     sender::SendFrame(handle, image);   // second
     auto lap = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
 
     timer.reset();
     sender::SendFrame(handle, image);   // third
     lap = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
 
     sender::DeleteCamera(handle);
 }
 
 TEST(SenderSendFrame, ShouldKeepProperIntervalEvenIfFirstFrameDelayed)
 {
-    const float FRAMERATE = 60.0f;
+    const float FRAMERATE = 20.0f;
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
     unsigned char image[320 * 240 * 3] = {};
 
-    SLEEP(10);  // delay
+    SLEEP(30);  // delay
 
     sender::SendFrame(handle, image);   // first
 
@@ -192,15 +192,15 @@ TEST(SenderSendFrame, ShouldKeepProperIntervalEvenIfFirstFrameDelayed)
     sender::SendFrame(handle, image);   // second
     auto lap = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
 
     timer.reset();
     sender::SendFrame(handle, image);   // third
     lap = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.002f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.002f );
+    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
+    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
 
     sender::DeleteCamera(handle);
 }
