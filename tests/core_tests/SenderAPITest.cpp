@@ -92,6 +92,16 @@ TEST(SenderCreateCamera, InvalidArgs) {
     }
 }
 
+TEST(SenderDeleteCamera, InvalidArgs)
+{
+    auto handle = sender::CreateCamera(320, 240);
+    int x = 0;
+    EXPECT_NO_THROW({ sender::DeleteCamera(&x); });
+    EXPECT_NO_THROW({ sender::DeleteCamera(nullptr); });
+    sender::DeleteCamera(handle); // correct
+    EXPECT_NO_THROW({ sender::DeleteCamera(handle); }); // double free
+}
+
 TEST(SenderSendFrame, Basic)
 {
     const float TIMEOUT = 1.0f;
