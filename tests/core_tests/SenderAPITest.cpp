@@ -205,6 +205,27 @@ TEST(SenderSendFrame, ShouldKeepProperIntervalEvenIfFirstFrameDelayed)
     sender::DeleteCamera(handle);
 }
 
+TEST(SenderSendFrame, InvalidArgs)
+{
+    auto handle = sender::CreateCamera(320, 240);
+    unsigned char image[320 * 240 * 3] = {};
+
+    EXPECT_NO_THROW({ sender::SendFrame(nullptr, nullptr); });
+    EXPECT_NO_THROW({ sender::SendFrame(nullptr, image); });
+    EXPECT_NO_THROW({ sender::SendFrame(handle, nullptr); });
+
+    auto fb = sc::FrameBuffer::open();
+    EXPECT_EQ( fb.frameCounter(), 0 );
+
+    sender::SendFrame(handle, image); // normal
+    EXPECT_EQ( fb.frameCounter(), 1 );
+
+    sender::DeleteCamera(handle);
+
+    EXPECT_NO_THROW({ sender::SendFrame(handle, image); });
+    EXPECT_EQ( fb.frameCounter(), 1 );
+}
+
 TEST(SenderWaitForConnection, ShouldBlockUntilReceiverConnected)
 {
     auto handle = sender::CreateCamera(320, 240);
