@@ -72,7 +72,7 @@ void Timer::sleep(float seconds)
 NamedMutex::NamedMutex(const char* name) :
     m_handle(CreateMutexA(nullptr, false, name), closeHandle)
 {
-    assert( m_handle.get() != nullptr );
+    assert( m_handle.get() != nullptr && "Creating a named mutex failed" );
 }
 
 void NamedMutex::lock()
@@ -84,7 +84,7 @@ void NamedMutex::unlock()
 {
     bool ret = ReleaseMutex(m_handle.get());
 
-    assert( ret == true );
+    assert( ret == true && "Tried to release a mutex that is not locked" );
     (void)ret;
 }
 
@@ -95,12 +95,12 @@ void NamedMutex::closeHandle(void* ptr)
         #ifndef NDEBUG
         // check for the error of closing still owned mutex
         bool ret1 = ReleaseMutex(ptr);
-        assert( ret1 == false );
+        assert( ret1 == false && "Tried to delete a mutex that is locked" );
         #endif
 
         bool ret2 = CloseHandle(ptr);
 
-        assert( ret2 == true );
+        assert( ret2 == true && "CloseHandle() for a mutex failed" );
         (void)ret2;
     }
 }
@@ -164,7 +164,7 @@ SharedMemory::closeHandle(void* ptr)
     {
         bool ret = CloseHandle(ptr);
 
-        assert( ret == true );
+        assert( ret == true && "CloseHandle() for a shared memory failed" );
         (void)ret;
     }
 }
