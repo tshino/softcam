@@ -153,6 +153,33 @@ TEST(SenderSendFrame, ShouldSendFirstFrameImmediately)
     sender::DeleteCamera(handle);
 }
 
+TEST(SenderSendFrame, ShouldSendEveryFrameImmediatelyIfZeroFramerate)
+{
+    const float FRAMERATE = 0.0f;
+    auto handle = sender::CreateCamera(320, 240, FRAMERATE);
+    unsigned char image[320 * 240 * 3] = {};
+
+    sc::Timer timer;
+    sender::SendFrame(handle, image);
+    auto lap = timer.get();
+
+    EXPECT_LE( lap, 0.002f );
+
+    timer.reset();
+    sender::SendFrame(handle, image);
+    lap = timer.get();
+
+    EXPECT_LE( lap, 0.002f );
+
+    timer.reset();
+    sender::SendFrame(handle, image);
+    lap = timer.get();
+
+    EXPECT_LE( lap, 0.002f );
+
+    sender::DeleteCamera(handle);
+}
+
 TEST(SenderSendFrame, ShouldKeepProperInterval)
 {
     const float FRAMERATE = 20.0f;
