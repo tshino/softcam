@@ -51,20 +51,26 @@ void Timer::sleep(float seconds)
         delay_msec = 1;
     }
     HANDLE e = CreateEventA(nullptr, false, false, nullptr);
+    if (e == nullptr)
+    {
+        // fallback to older API
+        Sleep(delay_msec);
+        return;
+    }
     MMRESULT ret = timeSetEvent(
                     delay_msec,
                     1,
                     (LPTIMECALLBACK)e,
                     0,
                     TIME_ONESHOT | TIME_CALLBACK_EVENT_SET);
-    if (ret != 0)
+    if (ret == 0)
     {
-        WaitForSingleObject(e, INFINITE);
-    }
-    else
-    {
+        // fallback to older API
+        CloseHandle(e);
         Sleep(delay_msec);
+        return;
     }
+    WaitForSingleObject(e, INFINITE);
     CloseHandle(e);
 }
 
