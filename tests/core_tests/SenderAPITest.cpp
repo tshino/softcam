@@ -232,6 +232,34 @@ TEST(SenderSendFrame, KeepsProperIntervalEvenIfFirstFrameDelayed)
     sender::DeleteCamera(handle);
 }
 
+TEST(SenderSendFrame, KeepsProperIntervalEvenIfSomeFramesDelayed)
+{
+    const float FRAMERATE = 20.0f;
+    const float INTERVAL = 1.0f / FRAMERATE;
+    auto handle = sender::CreateCamera(320, 240, FRAMERATE);
+    unsigned char image[320 * 240 * 3] = {};
+
+    sender::SendFrame(handle, image);   // first
+
+    sc::Timer timer;
+
+    SLEEP(30);  // delay
+    sender::SendFrame(handle, image);   // second
+    auto lap1 = timer.get();
+
+    EXPECT_GE( lap1, INTERVAL * 1.0f - 0.010f );
+    EXPECT_LE( lap1, INTERVAL * 1.0f + 0.010f );
+
+    SLEEP(20);  // delay
+    sender::SendFrame(handle, image);   // third
+    auto lap2 = timer.get();
+
+    EXPECT_GE( lap2, INTERVAL * 2.0f - 0.010f );
+    EXPECT_LE( lap2, INTERVAL * 2.0f + 0.010f );
+
+    sender::DeleteCamera(handle);
+}
+
 TEST(SenderSendFrame, InvalidArgs)
 {
     auto handle = sender::CreateCamera(320, 240);
