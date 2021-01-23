@@ -139,7 +139,7 @@ TEST(SenderSendFrame, Basic)
     sender::DeleteCamera(handle);
 }
 
-TEST(SenderSendFrame, ShouldSendFirstFrameImmediately)
+TEST(SenderSendFrame, SendsFirstFrameImmediately)
 {
     auto handle = sender::CreateCamera(320, 240);
     unsigned char image[320 * 240 * 3] = {};
@@ -153,7 +153,7 @@ TEST(SenderSendFrame, ShouldSendFirstFrameImmediately)
     sender::DeleteCamera(handle);
 }
 
-TEST(SenderSendFrame, ShouldSendEveryFrameImmediatelyIfZeroFramerate)
+TEST(SenderSendFrame, SendsEveryFrameImmediatelyIfZeroFramerate)
 {
     const float FRAMERATE = 0.0f;
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
@@ -180,9 +180,10 @@ TEST(SenderSendFrame, ShouldSendEveryFrameImmediatelyIfZeroFramerate)
     sender::DeleteCamera(handle);
 }
 
-TEST(SenderSendFrame, ShouldKeepProperInterval)
+TEST(SenderSendFrame, KeepsProperInterval)
 {
     const float FRAMERATE = 20.0f;
+    const float INTERVAL = 1.0f / FRAMERATE;
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
     unsigned char image[320 * 240 * 3] = {};
 
@@ -190,24 +191,24 @@ TEST(SenderSendFrame, ShouldKeepProperInterval)
 
     sc::Timer timer;
     sender::SendFrame(handle, image);   // second
-    auto lap = timer.get();
+    auto lap1 = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
+    EXPECT_GE( lap1, INTERVAL * 1.0f - 0.010f );
+    EXPECT_LE( lap1, INTERVAL * 1.0f + 0.010f );
 
-    timer.reset();
     sender::SendFrame(handle, image);   // third
-    lap = timer.get();
+    auto lap2 = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
+    EXPECT_GE( lap2, INTERVAL * 2.0f - 0.010f );
+    EXPECT_LE( lap2, INTERVAL * 2.0f + 0.010f );
 
     sender::DeleteCamera(handle);
 }
 
-TEST(SenderSendFrame, ShouldKeepProperIntervalEvenIfFirstFrameDelayed)
+TEST(SenderSendFrame, KeepsProperIntervalEvenIfFirstFrameDelayed)
 {
     const float FRAMERATE = 20.0f;
+    const float INTERVAL = 1.0f / FRAMERATE;
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
     unsigned char image[320 * 240 * 3] = {};
 
@@ -217,17 +218,16 @@ TEST(SenderSendFrame, ShouldKeepProperIntervalEvenIfFirstFrameDelayed)
 
     sc::Timer timer;
     sender::SendFrame(handle, image);   // second
-    auto lap = timer.get();
+    auto lap1 = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
+    EXPECT_GE( lap1, INTERVAL * 1.0f - 0.010f );
+    EXPECT_LE( lap1, INTERVAL * 1.0f + 0.010f );
 
-    timer.reset();
     sender::SendFrame(handle, image);   // third
-    lap = timer.get();
+    auto lap2 = timer.get();
 
-    EXPECT_GE( lap, 1.0f / FRAMERATE - 0.010f );
-    EXPECT_LE( lap, 1.0f / FRAMERATE + 0.010f );
+    EXPECT_GE( lap2, INTERVAL * 2.0f - 0.010f );
+    EXPECT_LE( lap2, INTERVAL * 2.0f + 0.010f );
 
     sender::DeleteCamera(handle);
 }
@@ -244,7 +244,7 @@ TEST(SenderSendFrame, InvalidArgs)
     auto fb = sc::FrameBuffer::open();
     EXPECT_EQ( fb.frameCounter(), 0 );
 
-    sender::SendFrame(handle, image); // normal
+    sender::SendFrame(handle, image); // ok. ++frame_counter
     EXPECT_EQ( fb.frameCounter(), 1 );
 
     sender::DeleteCamera(handle);
