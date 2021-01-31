@@ -2,11 +2,12 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
-### [Unreleased]
-- Fixed an issue on Debug DLL that was making an assertion failure when a console program that uses the DLL stops by pressing Ctrl+C.
-    - The cause was a global destructor of a std::mutex object in softcam.dll. The destructor claimed that the mutex object is still locked. That happens because when Ctrl+C has pressed the whole program execution stops immediately no matter the state of mutex objects and then the global destructors are invoked after that.
-    - This fix removes unnecessary global destructors to avoid such a scenario.
+### [1.3] - 2021-02-01
 - Improved accuracy of timing control.
+- Fixed an issue on Debug DLL.
+    - The `sender` example program was making an assertion failure when it stops with Ctrl+C pressed by the user.
+    - The cause of the assertion failure is a global destructor for a global std::mutex object in softcam.dll. The assertion in the destructor claimed that the mutex object is still locked. That happens because when Ctrl+C has pressed the whole program execution stops immediately no matter the state of mutex objects and then the global destructors are invoked after that.
+    - This fix removes unnecessary global destructors to avoid such a scenario.
 
 
 ### [1.2] - 2021-01-18
