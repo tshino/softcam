@@ -188,7 +188,7 @@ void FrameBuffer::write(const void* image_bits)
     std::memcpy(
             frame->imageData(),
             image_bits,
-            3 * (uint32_t)frame->m_width * (uint32_t)frame->m_height);
+            (std::size_t)3 * frame->m_width * frame->m_height);
     frame->m_frame_counter += 1;
 }
 
