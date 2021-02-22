@@ -1,6 +1,7 @@
 # Softcam
 
-[![Build and Test](https://github.com/tshino/softcam/workflows/Build%20and%20Test/badge.svg)](https://github.com/tshino/softcam/actions?query=workflow%3A%22Build+and+Test%22)
+[![Build and Test](https://github.com/tshino/softcam/actions/workflows/msbuild.yml/badge.svg)](https://github.com/tshino/softcam/actions/workflows/msbuild.yml)
+[![CodeQL](https://github.com/tshino/softcam/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/tshino/softcam/actions/workflows/codeql-analysis.yml)
 
 This is a library to make a virtual webcam on Windows.
 
