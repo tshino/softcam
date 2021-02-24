@@ -23,8 +23,11 @@ extern "C"
 
         The `framerate` argument is an optional argument that specifies the
         reference framerate of the camera. The default framerate is 60.
+
         If the value of the `framerate` argument is 0, the interval of each
-        frame is not constrained.
+        frame is not constrained and every frame is sent immediately by the
+        `scSendFrame` function. This is useful if the application has a
+        real-time source stream such as actual webcams.
 
         If this function succeeds, it returns the handle of a new virtual
         camera instance, otherwise, it returns a null pointer.
@@ -54,8 +57,8 @@ extern "C"
 
         If the framerate set to the virtual camera is zero, this function
         sends the new image immediately and does not control that timing.
-        This is useful if the application uses another source stream such
-        as actual webcams.
+        This is useful if the application has a real-time source stream
+        such as actual webcams.
     */
     void        SOFTCAM_API scSendFrame(scCamera camera, const void* image_bits);
 
