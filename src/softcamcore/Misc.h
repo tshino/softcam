@@ -65,6 +65,7 @@ class SharedMemory
     void    release();
 
     static void closeHandle(void*);
+    static void unmap(void* ptr);
 };
 
 

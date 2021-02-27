@@ -5,12 +5,6 @@
 #include <cassert>
 
 
-namespace {
-
-const auto unmap = [](void* ptr) { if (ptr) UnmapViewOfFile(ptr); };
-
-} //namespace
-
 namespace softcam {
 
 
@@ -99,7 +93,7 @@ void NamedMutex::closeHandle(void* ptr)
     if (ptr)
     {
         #ifndef NDEBUG
-        // check for the error of closing still owned mutex
+        // checks for the error of closing still owned mutex
         bool ret1 = ReleaseMutex(ptr);
         assert( ret1 == false && "Tried to delete a mutex that is locked" );
         #endif
@@ -175,5 +169,13 @@ SharedMemory::closeHandle(void* ptr)
     }
 }
 
+void
+SharedMemory::unmap(void* ptr)
+{
+    if (ptr)
+    {
+        UnmapViewOfFile(ptr);
+    }
+}
 
 } //namespace softcam
