@@ -84,6 +84,7 @@ STDAPI DllRegisterServer()
     {
         return hr;
     }
+    do
     {
         IFilterMapper2 *pFM2 = nullptr;
         hr = CoCreateInstance(
@@ -91,7 +92,7 @@ STDAPI DllRegisterServer()
                 IID_IFilterMapper2, (void**)&pFM2);
         if (FAILED(hr))
         {
-            return hr;
+            break;
         }
         pFM2->UnregisterFilter(
                 &CLSID_VideoInputDeviceCategory,
@@ -105,7 +106,7 @@ STDAPI DllRegisterServer()
                 FILTER_NAME,
                 &s_reg_filter2);
         pFM2->Release();
-    }
+    } while (0);
     CoFreeUnusedLibraries();
     CoUninitialize();
     return hr;
@@ -123,6 +124,7 @@ STDAPI DllUnregisterServer()
     {
         return hr;
     }
+    do
     {
         IFilterMapper2 *pFM2 = nullptr;
         hr = CoCreateInstance(
@@ -130,14 +132,14 @@ STDAPI DllUnregisterServer()
                 IID_IFilterMapper2, (void**)&pFM2);
         if (FAILED(hr))
         {
-            return hr;
+            break;
         }
         hr = pFM2->UnregisterFilter(
                 &CLSID_VideoInputDeviceCategory,
                 FILTER_NAME,
                 FILTER_CLASSID);
         pFM2->Release();
-    }
+    } while (0);
     CoFreeUnusedLibraries();
     CoUninitialize();
     return hr;

@@ -2,6 +2,10 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
+### [Unreleased]
+- Improved error handling.
+
+
 ### [1.3] - 2021-02-01
 - Improved accuracy of timing control.
 - Fixed an issue on Debug DLL.
