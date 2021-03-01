@@ -121,14 +121,12 @@ SharedMemory::SharedMemory(const char* name, unsigned long size)
 {
     m_handle.reset(
         CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, size, name),
-        closeHandle
-    );
+        closeHandle);
     if (m_handle && GetLastError() != ERROR_ALREADY_EXISTS)
     {
         m_address.reset(
             MapViewOfFile(m_handle.get(), FILE_MAP_WRITE, 0, 0, 0),
-            unmap
-        );
+            unmap);
         if (m_address)
         {
             m_size = size;
@@ -138,24 +136,27 @@ SharedMemory::SharedMemory(const char* name, unsigned long size)
     release();
 }
 
-SharedMemory::SharedMemory(const char* name) :
-    m_handle(
-        OpenFileMappingA(FILE_MAP_WRITE, false, name),
-        closeHandle),
-    m_address(
-        m_handle
-            ? MapViewOfFile(m_handle.get(), FILE_MAP_WRITE, 0, 0, 0) : nullptr,
-        unmap)
+SharedMemory::SharedMemory(const char* name)
 {
-    MEMORY_BASIC_INFORMATION meminfo;
-    if (m_address && 0 < VirtualQuery(m_address.get(), &meminfo, sizeof(meminfo)))
+    m_handle.reset(
+        OpenFileMappingA(FILE_MAP_WRITE, false, name),
+        closeHandle);
+    if (m_handle)
     {
-        m_size = (unsigned long)meminfo.RegionSize;
+        m_address.reset(
+            MapViewOfFile(m_handle.get(), FILE_MAP_WRITE, 0, 0, 0),
+            unmap);
+        if (m_address)
+        {
+            MEMORY_BASIC_INFORMATION meminfo;
+            if (0 < VirtualQuery(m_address.get(), &meminfo, sizeof(meminfo)))
+            {
+                m_size = (unsigned long)meminfo.RegionSize;
+                return;
+            }
+        }
     }
-    else
-    {
-        release();
-    }
+    release();
 }
 
 void
