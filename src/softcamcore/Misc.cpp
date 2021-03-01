@@ -117,16 +117,25 @@ SharedMemory::open(const char* name)
     return SharedMemory(name);
 }
 
-SharedMemory::SharedMemory(const char* name, unsigned long size) :
-    m_handle(
-        CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, size, name),
-        closeHandle),
-    m_address(
-        (m_handle && GetLastError() != ERROR_ALREADY_EXISTS)
-            ? MapViewOfFile(m_handle.get(), FILE_MAP_WRITE, 0, 0, 0) : nullptr,
-        unmap),
-    m_size(m_address ? size : (release(), 0))
+SharedMemory::SharedMemory(const char* name, unsigned long size)
 {
+    m_handle.reset(
+        CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, size, name),
+        closeHandle
+    );
+    if (m_handle && GetLastError() != ERROR_ALREADY_EXISTS)
+    {
+        m_address.reset(
+            MapViewOfFile(m_handle.get(), FILE_MAP_WRITE, 0, 0, 0),
+            unmap
+        );
+        if (m_address)
+        {
+            m_size = size;
+            return;
+        }
+    }
+    release();
 }
 
 SharedMemory::SharedMemory(const char* name) :
