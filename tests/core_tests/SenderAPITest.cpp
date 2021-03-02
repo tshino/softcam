@@ -13,10 +13,10 @@ namespace {
 namespace sc = softcam;
 namespace sender = softcam::sender;
 
-#define SLEEP(msec) \
+#define SLEEP_MS(msec) \
         std::this_thread::sleep_for(std::chrono::milliseconds(msec))
 #define WAIT_FOR_FLAG_CHANGE(atomic_flag, last_value) [&]{ \
-            while (atomic_flag == last_value) { SLEEP(1); } \
+            while (atomic_flag == last_value) { SLEEP_MS(1); } \
         }()
 
 TEST(SenderCreateCamera, Basic)
@@ -212,7 +212,7 @@ TEST(SenderSendFrame, KeepsProperIntervalEvenIfFirstFrameDelayed)
     auto handle = sender::CreateCamera(320, 240, FRAMERATE);
     unsigned char image[320 * 240 * 3] = {};
 
-    SLEEP(30);  // delay
+    SLEEP_MS(30);  // delay
 
     sender::SendFrame(handle, image);   // first
 
@@ -243,14 +243,14 @@ TEST(SenderSendFrame, KeepsProperIntervalEvenIfSomeFramesDelayed)
 
     sc::Timer timer;
 
-    SLEEP(30);  // delay
+    SLEEP_MS(30);  // delay
     sender::SendFrame(handle, image);   // second
     auto lap1 = timer.get();
 
     EXPECT_GE( lap1, INTERVAL * 1.0f - 0.010f );
     EXPECT_LE( lap1, INTERVAL * 1.0f + 0.010f );
 
-    SLEEP(20);  // delay
+    SLEEP_MS(20);  // delay
     sender::SendFrame(handle, image);   // third
     auto lap2 = timer.get();
 
@@ -289,7 +289,7 @@ TEST(SenderWaitForConnection, ShouldBlockUntilReceiverConnected)
     std::thread th([&]
     {
         WAIT_FOR_FLAG_CHANGE(flag, 0);
-        SLEEP(10);
+        SLEEP_MS(10);
         EXPECT_EQ( flag, 1 );
 
         auto fb = sc::FrameBuffer::open();
@@ -318,7 +318,7 @@ TEST(SenderWaitForConnection, ShouldTimeout)
     std::thread th([&]
     {
         WAIT_FOR_FLAG_CHANGE(flag, 0);
-        SLEEP(10);
+        SLEEP_MS(10);
         EXPECT_EQ( flag, 1 );
 
         WAIT_FOR_FLAG_CHANGE(flag, 1);
