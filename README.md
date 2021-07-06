@@ -73,4 +73,4 @@ Note: To support both 32-bit and 64-bit camera applications, each of the DLL `so
 
 [MIT](LICENSE).
 
-Note that the Base Classes libary (in [src/baseclasses](src/baseclasses) directory) is a part of [Microsft Windows Samples](https://github.com/microsoft/Windows-classic-samples) (Base Classes is in [Samples/Win7Samples/multimedia/directshow/baseclasses](https://github.com/microsoft/Windows-classic-samples/tree/master/Samples/Win7Samples/multimedia/directshow/baseclasses) directory) which is also provided under MIT license.
+Note that the Base Classes library (in [src/baseclasses](src/baseclasses) directory) is a part of [Microsft Windows Samples](https://github.com/microsoft/Windows-classic-samples) (Base Classes is in [Samples/Win7Samples/multimedia/directshow/baseclasses](https://github.com/microsoft/Windows-classic-samples/tree/master/Samples/Win7Samples/multimedia/directshow/baseclasses) directory) which is also provided under MIT license.
