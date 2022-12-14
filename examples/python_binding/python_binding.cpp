@@ -47,6 +47,8 @@ class Camera
         {
             throw std::invalid_argument("unexpected image size");
         }
+
+        py::gil_scoped_release release;
         scSendFrame(m_camera, image.data(0, 0));
     }
 
@@ -56,6 +58,8 @@ class Camera
         {
             throw std::runtime_error("the camera instance has been deleted");
         }
+
+        py::gil_scoped_release release;
         return scWaitForConnection(m_camera, timeout);
     }
 
