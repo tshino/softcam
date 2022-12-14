@@ -3,6 +3,7 @@
 All notable changes to the Softcam library will be documented in this file.
 
 ### [Unreleased]
+- Added Python binding of this library. [#12](https://github.com/tshino/softcam/issues/12)
 - Improved error handling.
 
 
