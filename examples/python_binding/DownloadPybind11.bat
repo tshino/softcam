@@ -1,4 +1,6 @@
 @echo off
+@REM Run this batch once before building this project.
+@REM This batch requires internet connection to download the Pybind11 archive.
 
 pushd %~dp0
 if not exist pybind11 (
