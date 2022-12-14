@@ -26,6 +26,10 @@ def main():
     cam = softcam.camera(320, 240, 60)
     draw_something = DrawSomething()
 
+    # Here, you can wait for an application to connect to this camera.
+    while not cam.wait_for_connection(timeout=1):
+        pass
+
     while True:
         # draw something
         img = draw_something.update(dt)
