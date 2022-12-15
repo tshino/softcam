@@ -49,7 +49,7 @@ There are two essential example programs in the `examples` directory.
 One is a demo (named `sender`) for simple usage of this library.
 The other is a program (named `softcam_installer`) for installation/uninstallation of this library to user's systems.
 
-Before running the demo you need to install the library to your system so that camera applications can detect it. So you need to build and run both examples. The steps are as follows.
+Before running the demo you need to install the library to your system so that camera applications can detect it. So you need to build and run both of the two examples. The steps are as follows.
 
 1. Open `examples/softcam_installer/softcam_installer.sln`, choose configuration `Release` and the platform `x64`, and build the solution.
     - You will get `softcam_installer.exe` in `examples/softcam_installer/x64/Release` directory.
