@@ -41,11 +41,27 @@ class Camera
         py::buffer_info info = image.request();
         if (info.ndim != 3 || info.shape[2] != 3)
         {
-            throw std::invalid_argument("'image' argument must be an BGR image (3-dim array)");
+            std::string actual_shape;
+            for (int i = 0; i < info.ndim; i++) {
+                actual_shape += std::to_string(info.shape[i]);
+                if (info.ndim == 1 || i + 1 < info.ndim) {
+                    actual_shape += ',';
+                }
+            }
+            throw std::invalid_argument(
+                "'image' argument must be an BGR image (3-dim array): "
+                "expected shape=("
+                    + std::to_string(m_height) + "," + std::to_string(m_width) + ",3), "
+                "actual shape=(" + actual_shape + ")"
+            );
         }
         if (info.shape[0] != m_height || info.shape[1] != m_width)
         {
-            throw std::invalid_argument("unexpected image size");
+            throw std::invalid_argument(
+                "unexpected image size: "
+                "expected=" + std::to_string(m_width) + "x" + std::to_string(m_height) + ", "
+                "actual=" + std::to_string(info.shape[1]) + "x" + std::to_string(info.shape[0])
+            );
         }
 
         py::gil_scoped_release release;

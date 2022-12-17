@@ -69,6 +69,18 @@ To see the video stream which is being produced by the `sender.exe`, you can use
 Note: To support both 32-bit and 64-bit camera applications, each of the DLL `softcam.dll` of both modes must be built and installed. Once both DLLs are installed in a system, no matter which one your application links to or which one the camera application accesses to, they can communicate and the images are streamed between them correctly.
 
 
+## Examples
+
+Following examples are available:
+
+- [sender](examples/sender/)
+    - This is the demo app explained above. You should look at this one first.
+- [softcam_installer](examples/softcam_installer/)
+    - Installer/uninstaller implementation of this library.
+- [python_binding](examples/python_binding/)
+    - Python binding of this library.
+
+
 ## License
 
 [MIT](LICENSE).
