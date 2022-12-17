@@ -24,3 +24,11 @@ while True:
 Then you can run `simple_usage.py`. Note that this sample code requires Numpy and OpenCV installed in your Python environment.
 
 Bring `softcam.pyd` and `softcam.dll` together to anywhere you want to use Softcam in python scripts.
+
+Note:
+
+- Different version of Python interpreter needs different build of `softcam.pyd`.
+    - For example, if you have built `softcam.pyd` with Python 3.9, trying to use it on Python 3.8 will fail with `ImportError`.
+- You can not change the filename of `softcam.pyd` after build.
+    - If you rename it to `foo.pyd` and run `import foo` or `import softcam` in your Python code, either will fail with the `ImportError`.
+    - This is because the name of the module is embedded in the file in build time.
