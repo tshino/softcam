@@ -122,8 +122,8 @@ int main()
 {
     // First, create a virtual camera instance with scCreateCamera().
     // A virtual camera is a source of a video image stream.
-    // The dimension width and height can be arbitrary positive numbers
-    // which are multiples of four.
+    // The dimension width and height can be any positive number
+    // that is a multiple of 4.
     // The third argument framerate is used to make sending frames at regular intervals.
     // This framerate argument can be omitted, and the default framerate is 60.
     // If you want to send every frame immediately without the frame rate regulator,
