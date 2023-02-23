@@ -94,7 +94,7 @@ PYBIND11_MODULE(softcam, m) {
             py::init<int, int, float>(),
             py::arg("width"),
             py::arg("height"),
-            py::arg("float") = 60.0f
+            py::arg("framerate") = 60.0f
         )
         .def(
             "delete",
