@@ -50,6 +50,11 @@ jobs:
     - name: Build Example python_binding
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        cd exammples/python_binding
+        cd examples/python_binding
         echo yes | call DownloadPybind11.bat
+        python -c "import sys;print(sys.prefix)" > _python_dir.txt
+        set /p PYTHON_DIR=<_python_dir.txt
+        del _python_dir.txt
+        set PYTHON_INCLUDE_DIR=%PYTHON_DIR%\include
+        set PYTHON_LIBS_DIR=%PYTHON_DIR%\libs
         msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ./python_binding.sln
