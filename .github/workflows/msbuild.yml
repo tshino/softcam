@@ -50,6 +50,7 @@ jobs:
     - name: Build Example python_binding
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: cmd
+      if: ${{ matrix.configuration == 'Release' && matrix.platform == 'x64' }}
       run: |
         cd examples/python_binding
         echo yes | call DownloadPybind11.bat
