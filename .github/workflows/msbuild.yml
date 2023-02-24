@@ -49,9 +49,10 @@ jobs:
 
     - name: Build Example python_binding
       working-directory: ${{env.GITHUB_WORKSPACE}}
+      shell: cmd
       run: |
         cd examples/python_binding
-        echo yes | DownloadPybind11.bat
+        echo yes | call DownloadPybind11.bat
         python -c "import sys;print(sys.prefix)" > _python_dir.txt
         set /p PYTHON_DIR=<_python_dir.txt
         del _python_dir.txt
