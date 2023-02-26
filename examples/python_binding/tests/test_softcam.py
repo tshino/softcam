@@ -29,5 +29,4 @@ def test_camera_framerate_is_optional():
     cam = None
 
 
-def test_fail():
-    assert False
+# TODO: add more tests
