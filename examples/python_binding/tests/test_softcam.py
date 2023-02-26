@@ -27,3 +27,7 @@ def test_camera_framerate_is_optional():
     cam = softcam.camera(320, 240)
     assert cam is not None
     cam = None
+
+
+def test_fail():
+    assert False
