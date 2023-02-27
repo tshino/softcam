@@ -48,7 +48,7 @@ jobs:
       run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ./examples/softcam_installer/softcam_installer.sln
 
     - name: Build Example python_binding
-      working-directory: ${GITHUB_WORKSPACE}/examples/python_binding
+      working-directory: ./examples/python_binding
       shell: cmd
       if: ${{ matrix.configuration == 'Release' && matrix.platform == 'x64' }}
       run: |
@@ -57,7 +57,7 @@ jobs:
         msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ./python_binding.sln
 
     - name: Test Python Binding
-      working-directory: ${GITHUB_WORKSPACE}/examples/python_binding
+      working-directory: ./examples/python_binding
       shell: cmd
       if: ${{ matrix.configuration == 'Release' && matrix.platform == 'x64' }}
       run: |
