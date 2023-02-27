@@ -48,20 +48,18 @@ jobs:
       run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ./examples/softcam_installer/softcam_installer.sln
 
     - name: Build Example python_binding
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      working-directory: ${{env.GITHUB_WORKSPACE}}/examples/python_binding
       shell: cmd
       if: ${{ matrix.configuration == 'Release' && matrix.platform == 'x64' }}
       run: |
-        cd examples/python_binding
         echo yes | call DownloadPybind11.bat
         call _GetPythonPath.bat
         msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ./python_binding.sln
 
     - name: Test Python Binding
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      working-directory: ${{env.GITHUB_WORKSPACE}}/examples/python_binding
       shell: cmd
       if: ${{ matrix.configuration == 'Release' && matrix.platform == 'x64' }}
       run: |
-        cd examples/python_binding
         pip install pytest numpy
         pytest
