@@ -32,6 +32,7 @@ def main():
 
     while True:
         # draw something
+        # Note that the color component order should be BGR, not RGB.
         img = draw_something.update(dt)
         # send the image
         cam.send_frame(img)

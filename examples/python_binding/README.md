@@ -21,12 +21,13 @@ while True:
 4. Run `LaunchVisualStudio.bat` in the environment. This batch prepares environment variables that point the directory of the Python environment and launch Visual Studio for the solution file `pythin_binding.sln` with that environment variables.
 5. On the Visual Studio, build solution with `Release`|`x64` configuration. You will get `softcam.pyd` in the `x64/Release` directory.
 
-Then you can run `simple_usage.py`. Note that this sample code requires Numpy and OpenCV installed in your Python environment.
+Then you can run `simple_usage.py`. Note that this script requires Numpy and OpenCV installed in your Python environment.
 
 Bring `softcam.pyd` and `softcam.dll` together to anywhere you want to use Softcam in python scripts.
 
 Note:
 
+- The color component order should be BGR, not RGB.
 - Different version of Python interpreter needs different build of `softcam.pyd`.
     - For example, if you have built `softcam.pyd` with Python 3.9, trying to use it on Python 3.8 will fail with `ImportError`.
 - You can not change the filename of `softcam.pyd` after build.
