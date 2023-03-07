@@ -147,6 +147,11 @@ AM_MEDIA_TYPE* makeMediaType(int width, int height, float framerate)
     return amt;
 }
 
+const bool HasDefaultImage = true; // TODO: Check if default image is available or not
+const int DefaultImageWidth = 320; // TODO: Read the default image when it's necessary
+const int DefaultImageHeight = 240; // TODO: Read the default image when it's necessary
+const float DefaultFramerate = 60.0f; // TODO: Read the default image when it's necessary
+
 } //namespace
 
 namespace softcam {
@@ -166,10 +171,10 @@ CUnknown * Softcam::CreateInstance(
 Softcam::Softcam(LPUNKNOWN lpunk, const GUID& clsid, HRESULT *phr) :
     CSource(NAME("DirectShow Softcam"), lpunk, clsid),
     m_frame_buffer(FrameBuffer::open()),
-    m_valid(m_frame_buffer ? true : false),
-    m_width(m_frame_buffer.width()),
-    m_height(m_frame_buffer.height()),
-    m_framerate(m_frame_buffer.framerate())
+    m_valid(m_frame_buffer || HasDefaultImage),
+    m_width(m_frame_buffer ? m_frame_buffer.width() : DefaultImageWidth),
+    m_height(m_frame_buffer ? m_frame_buffer.height() : DefaultImageHeight),
+    m_framerate(m_frame_buffer ? m_frame_buffer.framerate() : DefaultFramerate)
 {
     CAutoLock lock(&m_cStateLock);
 
@@ -446,7 +451,15 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
             Timer::sleep(0.100f);
 
             const std::size_t size = calcDIBSize(m_width, m_height);
-            std::memcpy(pData, m_screenshot.get(), size);
+            if (m_screenshot)
+            {
+                std::memcpy(pData, m_screenshot.get(), size);
+            }
+            else
+            {
+                // TODO: Write the default image
+                std::memset(pData, 77, size);
+            }
         }
 
         CAutoLock lock(&m_critsec);
