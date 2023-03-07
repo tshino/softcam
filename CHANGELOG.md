@@ -2,7 +2,7 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
-### [Unreleased]
+### [1.5] - 2023-03-07
 - Updated the python_binding example:
     - Fixed wrong argument name in the python_binding example. [#16](https://github.com/tshino/softcam/pull/16)
     - Added CI build and test of the python_binding example. [#17](https://github.com/tshino/softcam/issues/17)
