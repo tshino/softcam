@@ -147,7 +147,7 @@ AM_MEDIA_TYPE* makeMediaType(int width, int height, float framerate)
     return amt;
 }
 
-const bool HasDefaultImage = true; // TODO: Check if default image is available or not
+const bool HasDefaultImage = false; //true; // TODO: Check if default image is available or not
 const int DefaultImageWidth = 320; // TODO: Read the default image when it's necessary
 const int DefaultImageHeight = 240; // TODO: Read the default image when it's necessary
 const float DefaultFramerate = 60.0f; // TODO: Read the default image when it's necessary
@@ -172,9 +172,9 @@ Softcam::Softcam(LPUNKNOWN lpunk, const GUID& clsid, HRESULT *phr) :
     CSource(NAME("DirectShow Softcam"), lpunk, clsid),
     m_frame_buffer(FrameBuffer::open()),
     m_valid(m_frame_buffer || HasDefaultImage),
-    m_width(m_frame_buffer ? m_frame_buffer.width() : DefaultImageWidth),
-    m_height(m_frame_buffer ? m_frame_buffer.height() : DefaultImageHeight),
-    m_framerate(m_frame_buffer ? m_frame_buffer.framerate() : DefaultFramerate)
+    m_width(m_frame_buffer ? m_frame_buffer.width() : HasDefaultImage ? DefaultImageWidth : 0),
+    m_height(m_frame_buffer ? m_frame_buffer.height() : HasDefaultImage ? DefaultImageHeight : 0),
+    m_framerate(m_frame_buffer ? m_frame_buffer.framerate() : HasDefaultImage ? DefaultFramerate : 0.0f)
 {
     CAutoLock lock(&m_cStateLock);
 
