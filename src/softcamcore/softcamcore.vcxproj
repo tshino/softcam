@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DefaultImage.h" />
     <ClInclude Include="DShowSoftcam.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Misc.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Watchdog.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DefaultImage.cpp" />
     <ClCompile Include="DShowSoftcam.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Misc.cpp" />
