@@ -26,6 +26,9 @@
     <ClInclude Include="Watchdog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DefaultImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FrameBuffer.cpp">
@@ -41,6 +44,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Watchdog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
