@@ -57,6 +57,7 @@ class Softcam : public ::testing::Test
         {
             m_softcam->Release();
         }
+        sc::Softcam::disableDefaultBlankImage();
     }
 };
 
