@@ -147,14 +147,29 @@ AM_MEDIA_TYPE* makeMediaType(int width, int height, float framerate)
     return amt;
 }
 
-const bool HasDefaultImage = false; //true; // TODO: Check if default image is available or not
-const int DefaultImageWidth = 320; // TODO: Read the default image when it's necessary
-const int DefaultImageHeight = 240; // TODO: Read the default image when it's necessary
-const float DefaultFramerate = 60.0f; // TODO: Read the default image when it's necessary
+bool UseDefaultBlankImage = false; // Testing purpose only
+int DefaultImageWidth = 0; // Testing purpose only
+int DefaultImageHeight = 0; // Testing purpose only
+const float DefaultFramerate = 60.0f;
 
 } //namespace
 
 namespace softcam {
+
+
+void Softcam::enableDefaultBlankImage(int width, int height)
+{
+    UseDefaultBlankImage = true;
+    DefaultImageWidth = width;
+    DefaultImageHeight = height;
+}
+
+void Softcam::disableDefaultBlankImage()
+{
+    UseDefaultBlankImage = false;
+    DefaultImageWidth = 0;
+    DefaultImageHeight = 0;
+}
 
 
 CUnknown * Softcam::CreateInstance(
@@ -171,10 +186,14 @@ CUnknown * Softcam::CreateInstance(
 Softcam::Softcam(LPUNKNOWN lpunk, const GUID& clsid, HRESULT *phr) :
     CSource(NAME("DirectShow Softcam"), lpunk, clsid),
     m_frame_buffer(FrameBuffer::open()),
-    m_valid(m_frame_buffer || HasDefaultImage),
-    m_width(m_frame_buffer ? m_frame_buffer.width() : HasDefaultImage ? DefaultImageWidth : 0),
-    m_height(m_frame_buffer ? m_frame_buffer.height() : HasDefaultImage ? DefaultImageHeight : 0),
-    m_framerate(m_frame_buffer ? m_frame_buffer.framerate() : HasDefaultImage ? DefaultFramerate : 0.0f)
+    m_default_image(
+        m_frame_buffer ? DefaultImage{} :
+        UseDefaultBlankImage ? DefaultImage::makeBlankImage(DefaultImageWidth, DefaultImageHeight) :
+        DefaultImage{} /* TODO: Read the default image when it's necessary */),
+    m_valid(m_frame_buffer || m_default_image),
+    m_width(m_frame_buffer ? m_frame_buffer.width() : m_default_image ? m_default_image.width() : 0),
+    m_height(m_frame_buffer ? m_frame_buffer.height() : m_default_image ? m_default_image.height() : 0),
+    m_framerate(m_frame_buffer ? m_frame_buffer.framerate() : m_default_image ? DefaultFramerate : 0.0f)
 {
     CAutoLock lock(&m_cStateLock);
 
