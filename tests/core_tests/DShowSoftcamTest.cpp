@@ -163,6 +163,54 @@ TEST_F(Softcam, AttributesWithBothValidServerAndDefaultImage)
     EXPECT_EQ( m_softcam->framerate(), 30.0f );
 }
 
+TEST_F(Softcam, AttributesSwitchingFromDefaultImageToActualServer)
+{
+    sc::Softcam::enableDefaultBlankImage(320, 240);
+
+    HRESULT hr = 555;
+    m_softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( m_softcam, nullptr );
+    m_softcam->AddRef();
+
+    EXPECT_EQ( m_softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( m_softcam->valid(), true );
+    EXPECT_EQ( m_softcam->width(), 320 );
+    EXPECT_EQ( m_softcam->height(), 240 );
+    EXPECT_EQ( m_softcam->framerate(), 60.0f );
+
+    auto fb = createFrameBufer(320, 240, 30);
+
+    EXPECT_NE( m_softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( m_softcam->valid(), true );
+    EXPECT_EQ( m_softcam->width(), 320 );
+    EXPECT_EQ( m_softcam->height(), 240 );
+    EXPECT_EQ( m_softcam->framerate(), 60.0f );
+}
+
+TEST_F(Softcam, AttributesKeepingDefaultImageIfIncompatibleServer)
+{
+    sc::Softcam::enableDefaultBlankImage(320, 240);
+
+    HRESULT hr = 555;
+    m_softcam = (sc::Softcam*)sc::Softcam::CreateInstance(nullptr, SOME_GUID, &hr);
+    ASSERT_NE( m_softcam, nullptr );
+    m_softcam->AddRef();
+
+    EXPECT_EQ( m_softcam->getFrameBuffer(), nullptr );
+    EXPECT_EQ( m_softcam->valid(), true );
+    EXPECT_EQ( m_softcam->width(), 320 );
+    EXPECT_EQ( m_softcam->height(), 240 );
+    EXPECT_EQ( m_softcam->framerate(), 60.0f );
+
+    auto fb = createFrameBufer(300, 200, 30); // <--
+
+    EXPECT_EQ( m_softcam->getFrameBuffer(), nullptr ); // <--
+    EXPECT_EQ( m_softcam->valid(), true );
+    EXPECT_EQ( m_softcam->width(), 320 ); // <--
+    EXPECT_EQ( m_softcam->height(), 240 ); // <--
+    EXPECT_EQ( m_softcam->framerate(), 60.0f );
+}
+
 TEST_F(Softcam, AttributesDeactivatedServer)
 {
     auto fb = createFrameBufer(320, 240, 60);
