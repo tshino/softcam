@@ -3,6 +3,7 @@
 #include <memory>
 #include <baseclasses/streams.h>
 #include "FrameBuffer.h"
+#include "DefaultImage.h"
 
 
 namespace softcam {
@@ -33,8 +34,13 @@ public:
     float           framerate() const { return m_framerate; }
     void            releaseFrameBuffer();
 
+    // Testing purpose only
+    static void     enableDefaultBlankImage(int width, int height);
+    static void     disableDefaultBlankImage();
+
 private:
     FrameBuffer m_frame_buffer;
+    DefaultImage m_default_image;
     const bool  m_valid;
     const int   m_width;
     const int   m_height;
