@@ -34,6 +34,8 @@ public:
     float           framerate() const { return m_framerate; }
     void            releaseFrameBuffer();
 
+    const DefaultImage* getDefaultImage();
+
     // Testing purpose only
     static void     enableDefaultBlankImage(int width, int height);
     static void     disableDefaultBlankImage();

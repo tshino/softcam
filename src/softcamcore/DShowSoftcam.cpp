@@ -8,6 +8,8 @@
 #include <chrono>
 #include <ctime>
 
+#include "Misc.h"
+
 
 namespace {
 
@@ -150,6 +152,8 @@ AM_MEDIA_TYPE* makeMediaType(int width, int height, float framerate)
 bool UseDefaultBlankImage = false; // Testing purpose only
 int DefaultImageWidth = 0; // Testing purpose only
 int DefaultImageHeight = 0; // Testing purpose only
+
+const char DefaultImageSuffix[] = "\\placeholder.png";
 const float DefaultFramerate = 60.0f;
 
 } //namespace
@@ -189,12 +193,15 @@ Softcam::Softcam(LPUNKNOWN lpunk, const GUID& clsid, HRESULT *phr) :
     m_default_image(
         m_frame_buffer ? DefaultImage{} :
         UseDefaultBlankImage ? DefaultImage::makeBlankImage(DefaultImageWidth, DefaultImageHeight) :
-        DefaultImage{} /* TODO: Read the default image when it's necessary */),
+        DefaultImage::tryLoad(GetModuleDirectoryPath() + DefaultImageSuffix)),
     m_valid(m_frame_buffer || m_default_image),
     m_width(m_frame_buffer ? m_frame_buffer.width() : m_default_image ? m_default_image.width() : 0),
     m_height(m_frame_buffer ? m_frame_buffer.height() : m_default_image ? m_default_image.height() : 0),
     m_framerate(m_frame_buffer ? m_frame_buffer.framerate() : m_default_image ? DefaultFramerate : 0.0f)
 {
+    LOG("ctor -> frame_buffer:%s(%dx%d) default_image:%s(%dx%d)\n",
+        m_frame_buffer ? "valid" : "none", m_frame_buffer.width(), m_frame_buffer.height(),
+        m_default_image ? "valid" : "none", m_default_image.width(), m_default_image.height());
     CAutoLock lock(&m_cStateLock);
 
     m_paStreams = new CSourceStream*[1];
@@ -388,6 +395,20 @@ Softcam::releaseFrameBuffer()
     m_frame_buffer.release();
 }
 
+const DefaultImage*
+Softcam::getDefaultImage()
+{
+    CAutoLock lock(&m_cStateLock);
+    if (m_default_image)
+    {
+        return &m_default_image;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 SoftcamStream::SoftcamStream(HRESULT *phr,
                          Softcam *pParent,
                          LPCWSTR pPinName) :
@@ -474,10 +495,9 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
             {
                 std::memcpy(pData, m_screenshot.get(), size);
             }
-            else
+            else if (auto def = getParent()->getDefaultImage())
             {
-                // TODO: Write the default image
-                std::memset(pData, 77, size);
+                std::memcpy(pData, def->imageBits(), size);
             }
         }
 
