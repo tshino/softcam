@@ -35,7 +35,7 @@ DefaultImage::tryLoad(const std::string& file_path)
     {
         return {};
     }
-    if (FAILED(CoInitialize(nullptr)))
+    if (FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
     {
         return {};
     }
