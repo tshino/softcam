@@ -336,7 +336,7 @@ FrameBuffer* Softcam::getFrameBuffer()
         return nullptr;
     }
 
-    CAutoLock lock(&m_cStateLock);
+    CAutoLock lock(&m_critsec);
     if (!m_frame_buffer)
     {
         auto fb = FrameBuffer::open();
@@ -361,7 +361,7 @@ FrameBuffer* Softcam::getFrameBuffer()
 void
 Softcam::releaseFrameBuffer()
 {
-    CAutoLock lock(&m_cStateLock);
+    CAutoLock lock(&m_critsec);
     m_frame_buffer.release();
 }
 

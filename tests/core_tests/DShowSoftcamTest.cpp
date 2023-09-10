@@ -921,5 +921,43 @@ TEST_F(SoftcamStream, CSourceStreamGetMediaTypeNormal)
     checkMediaType320x240(&mt);
 }
 
+TEST_F(SoftcamStream, getFrameBuffer_must_not_lock_the_filter_state)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    SetUpSoftcamStream();
+
+    CAutoLock lock(m_softcam->pStateLock()); // 1st lock
+    std::atomic<int> done{false};
+    std::thread th([&]
+    {
+        // A deadlock occurs if this code attempts to get lock.
+        m_softcam->getFrameBuffer();
+        done = true;
+    });
+
+    for (int i = 0; !done && i < 20; i++) { sc::Timer::sleep(0.050f); }
+    ASSERT_TRUE( done );
+    th.join();
+}
+
+TEST_F(SoftcamStream, releaseFrameBuffer_must_not_lock_the_filter_state)
+{
+    auto fb = createFrameBufer(320, 240, 60);
+    SetUpSoftcamStream();
+
+    CAutoLock lock(m_softcam->pStateLock()); // 1st lock
+    std::atomic<int> done{false};
+    std::thread th([&]
+    {
+        // A deadlock occurs if this code attempts to get lock.
+        m_softcam->releaseFrameBuffer();
+        done = true;
+    });
+
+    for (int i = 0; !done && i < 20; i++) { sc::Timer::sleep(0.050f); }
+    ASSERT_TRUE( done );
+    th.join();
+}
+
 
 } //namespace
