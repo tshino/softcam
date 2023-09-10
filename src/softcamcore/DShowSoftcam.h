@@ -41,6 +41,7 @@ public:
     static void     disableDefaultBlankImage();
 
 private:
+    CCritSec    m_critsec;
     FrameBuffer m_frame_buffer;
     DefaultImage m_default_image;
     const bool  m_valid;
