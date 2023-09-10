@@ -34,6 +34,7 @@ public:
     void            releaseFrameBuffer();
 
 private:
+    CCritSec    m_critsec;
     FrameBuffer m_frame_buffer;
     const bool  m_valid;
     const int   m_width;

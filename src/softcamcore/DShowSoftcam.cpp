@@ -171,10 +171,11 @@ Softcam::Softcam(LPUNKNOWN lpunk, const GUID& clsid, HRESULT *phr) :
     m_height(m_frame_buffer.height()),
     m_framerate(m_frame_buffer.framerate())
 {
-    CAutoLock lock(&m_cStateLock);
-
-    m_paStreams = new CSourceStream*[1];
-    m_paStreams[0] = new SoftcamStream(phr, this, L"DirectShow Softcam Stream");
+    // This code is okay though it may look strange as the return value is ignored.
+    // Calling the SoftcamStream constructor results in calling the CBaseOutputPin
+    // constructor which registers the instance to this Softcam instance by calling
+    // CSource::AddPin().
+    (void)new SoftcamStream(phr, this, L"DirectShow Softcam Stream");
 }
 
 
@@ -335,7 +336,7 @@ FrameBuffer* Softcam::getFrameBuffer()
         return nullptr;
     }
 
-    CAutoLock lock(&m_cStateLock);
+    CAutoLock lock(&m_critsec);
     if (!m_frame_buffer)
     {
         auto fb = FrameBuffer::open();
@@ -360,7 +361,7 @@ FrameBuffer* Softcam::getFrameBuffer()
 void
 Softcam::releaseFrameBuffer()
 {
-    CAutoLock lock(&m_cStateLock);
+    CAutoLock lock(&m_critsec);
     m_frame_buffer.release();
 }
 
