@@ -1,8 +1,12 @@
 #include "Misc.h"
 
 #include <windows.h>
+#include <shlwapi.h>
 #include <cmath>
 #include <cassert>
+
+
+#pragma comment(lib, "shlwapi.lib") // PathRemoveFileSpecA
 
 
 namespace softcam {
@@ -186,6 +190,32 @@ SharedMemory::unmap(void* ptr)
     {
         UnmapViewOfFile(ptr);
     }
+}
+
+std::string
+GetModuleDirectoryPath()
+{
+    // get module handle
+    MEMORY_BASIC_INFORMATION info;
+    if (0 < VirtualQueryEx(
+                GetCurrentProcess(),
+                (void*)&GetModuleDirectoryPath,
+                &info,
+                sizeof(info)))
+    {
+        HMODULE hmodule = (HMODULE)info.AllocationBase;
+        // get the file path
+        char buf[1024];
+        if (0 < GetModuleFileNameA(hmodule, buf, sizeof(buf)))
+        {
+            // get the directory path
+            if (PathRemoveFileSpecA(buf))
+            {
+                return buf;
+            }
+        }
+    }
+    return {};
 }
 
 } //namespace softcam

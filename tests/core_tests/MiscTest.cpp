@@ -218,4 +218,18 @@ TEST(SharedMemory, MultipleOpenSucceeds) {
     EXPECT_GE( view3.size(), SHMEM_SIZE );
 }
 
+TEST(GetModuleDirectoryPath, NotEmpty) {
+    auto path = sc::GetModuleDirectoryPath();
+
+    EXPECT_FALSE( path.empty() );
+}
+
+TEST(GetModuleDirectoryPath, Consistent) {
+    auto path1 = sc::GetModuleDirectoryPath();
+    auto path2 = sc::GetModuleDirectoryPath();
+
+    EXPECT_TRUE( path1 == path2 );
+}
+
+
 } //namespace

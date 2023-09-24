@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <cstdint>
+#include <string>
 
 
 namespace softcam {
@@ -67,6 +68,10 @@ class SharedMemory
     static void closeHandle(void*);
     static void unmap(void* ptr);
 };
+
+
+/// Retrieve the directory path of this module (DLL/EXE)
+std::string GetModuleDirectoryPath();
 
 
 } //namespace softcam

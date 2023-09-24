@@ -45,6 +45,7 @@
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="DefaultImageTest.cpp" />
     <ClCompile Include="DShowSoftcamTest.cpp" />
     <ClCompile Include="FrameBufferTest.cpp" />
     <ClCompile Include="MiscTest.cpp" />
