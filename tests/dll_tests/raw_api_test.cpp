@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 
-namespace {
+namespace RawAPITest {
 
 TEST(scCreateCamera, Basic) {
     {
@@ -93,4 +93,4 @@ TEST(scDeleteCamera, IgnoresInvalidPointer) {
     scDeleteCamera(&x);
 }
 
-} //namespace
+} //namespace RawAPITest
