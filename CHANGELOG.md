@@ -2,6 +2,10 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
+### [Unreleased]
+- Refactoring:
+    - Named namespaces of each test code for better visualization. [#42](https://github.com/tshino/softcam/pull/42)
+
 ### [1.6] - 2023-09-10
 - Fixed a deadlock issue. [#39](https://github.com/tshino/softcam/pull/39)
 
