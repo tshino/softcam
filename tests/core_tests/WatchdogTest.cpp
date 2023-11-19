@@ -6,7 +6,7 @@
 #include <chrono>
 
 
-namespace {
+namespace WatchdogTest {
 namespace sc = softcam;
 
 #define SLEEP_S(sec) \
@@ -143,4 +143,4 @@ TEST(Watchdog, MonitorTimeouts)
     EXPECT_EQ( monitor.alive(), false );
 }
 
-} //namespace
+} //namespace WatchdogTest

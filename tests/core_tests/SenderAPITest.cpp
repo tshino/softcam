@@ -9,7 +9,7 @@
 #include <softcamcore/Misc.h>
 
 
-namespace {
+namespace SenderAPITest {
 namespace sc = softcam;
 namespace sender = softcam::sender;
 
@@ -346,4 +346,4 @@ TEST(SenderWaitForConnection, InvalidArgs)
     EXPECT_EQ( ret, false );
 }
 
-} //namespace
+} //namespace SenderAPITest

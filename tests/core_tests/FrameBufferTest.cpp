@@ -6,7 +6,7 @@
 #include <thread>
 
 
-namespace {
+namespace FrameBufferTest {
 namespace sc = softcam;
 
 
@@ -352,4 +352,4 @@ TEST(FrameBuffer, ReleaseOnReceiverDisconnects) {
     EXPECT_EQ( sender.active(), true );
 }
 
-} //namespace
+} //namespace FrameBufferTest

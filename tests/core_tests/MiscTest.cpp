@@ -7,7 +7,7 @@
 #include <cmath>
 
 
-namespace {
+namespace MiscTest {
 namespace sc = softcam;
 
 const char SHMEM_NAME[] = "shmemtest";
@@ -218,4 +218,4 @@ TEST(SharedMemory, MultipleOpenSucceeds) {
     EXPECT_GE( view3.size(), SHMEM_SIZE );
 }
 
-} //namespace
+} //namespace MiscTest

@@ -7,7 +7,7 @@
 #include <algorithm>
 
 
-namespace {
+namespace DShowSoftcamTest {
 namespace sc = softcam;
 
 
@@ -960,4 +960,4 @@ TEST_F(SoftcamStream, releaseFrameBuffer_must_not_lock_the_filter_state)
 }
 
 
-} //namespace
+} //namespace DShowSoftcamTest
