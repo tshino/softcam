@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{52968d29-aa5f-41a4-bf1e-4c50f1098373}</ProjectGuid>
+    <RootNamespace>softcam</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>softcamd</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>softcamd</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>softcam</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>softcam</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;..;..\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>softcam.def</ModuleDefinitionFile>
+      <AdditionalDependencies>winmm.lib;msvcrtd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>@if not exist $(SolutionDir)dist mkdir $(SolutionDir)dist
+@if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
+@if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
+@if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\lib\$(Platform) mkdir $(SolutionDir)dist\lib\$(Platform)
+@if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if not exist $(SolutionDir)dist\bin\$(Platform) mkdir $(SolutionDir)dist\bin\$(Platform)
+@echo softcam.h -^&gt; ...dist\include\softcam\
+@copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
+@echo $(TargetName).lib -^&gt; ...dist\lib\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(Platform)
+@echo $(TargetName).dll -^&gt; ...dist\bin\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(Platform)
+</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Creating dist directory and copying the header and binaries into it.</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;..;..\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>softcam.def</ModuleDefinitionFile>
+      <AdditionalDependencies>winmm.lib;msvcrtd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>@if not exist $(SolutionDir)dist mkdir $(SolutionDir)dist
+@if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
+@if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
+@if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\lib\$(Platform) mkdir $(SolutionDir)dist\lib\$(Platform)
+@if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if not exist $(SolutionDir)dist\bin\$(Platform) mkdir $(SolutionDir)dist\bin\$(Platform)
+@echo softcam.h -^&gt; ...dist\include\softcam\
+@copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
+@echo $(TargetName).lib -^&gt; ...dist\lib\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(Platform)
+@echo $(TargetName).dll -^&gt; ...dist\bin\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(Platform)
+</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Creating dist directory and copying the header and binaries into it.</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;..;..\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>softcam.def</ModuleDefinitionFile>
+      <AdditionalDependencies>winmm.lib;msvcrt.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>@if not exist $(SolutionDir)dist mkdir $(SolutionDir)dist
+@if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
+@if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
+@if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\lib\$(Platform) mkdir $(SolutionDir)dist\lib\$(Platform)
+@if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if not exist $(SolutionDir)dist\bin\$(Platform) mkdir $(SolutionDir)dist\bin\$(Platform)
+@echo softcam.h -^&gt; ...dist\include\softcam\
+@copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
+@echo $(TargetName).lib -^&gt; ...dist\lib\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(Platform)
+@echo $(TargetName).dll -^&gt; ...dist\bin\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(Platform)
+</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Creating dist directory and copying the header and binaries into it.</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;..;..\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>softcam.def</ModuleDefinitionFile>
+      <AdditionalDependencies>winmm.lib;msvcrt.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>@if not exist $(SolutionDir)dist mkdir $(SolutionDir)dist
+@if not exist $(SolutionDir)dist\include mkdir $(SolutionDir)dist\include
+@if not exist $(SolutionDir)dist\include\softcam mkdir $(SolutionDir)dist\include\softcam
+@if not exist $(SolutionDir)dist\lib mkdir $(SolutionDir)dist\lib
+@if not exist $(SolutionDir)dist\lib\$(Platform) mkdir $(SolutionDir)dist\lib\$(Platform)
+@if not exist $(SolutionDir)dist\bin mkdir $(SolutionDir)dist\bin
+@if not exist $(SolutionDir)dist\bin\$(Platform) mkdir $(SolutionDir)dist\bin\$(Platform)
+@echo softcam.h -^&gt; ...dist\include\softcam\
+@copy /y $(ProjectDir)softcam.h $(SolutionDir)dist\include\softcam
+@echo $(TargetName).lib -^&gt; ...dist\lib\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).lib $(SolutionDir)dist\lib\$(Platform)
+@echo $(TargetName).dll -^&gt; ...dist\bin\$(Platform)\
+@copy /y $(TargetDir)$(TargetName).dll $(SolutionDir)dist\bin\$(Platform)
+</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Creating dist directory and copying the header and binaries into it.</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="softcam.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="softcam.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="softcam.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\baseclasses\BaseClasses_vs2019.vcxproj">
+      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\softcamcore\softcamcore_vs2019.vcxproj">
+      <Project>{df9d5a2d-3bed-4d1a-8484-22a654c9ad76}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
