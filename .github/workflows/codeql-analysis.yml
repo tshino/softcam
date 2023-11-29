@@ -20,7 +20,7 @@ on:
 
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: .
+  SOLUTION_FILE_PATH: ./softcam.sln
 
 jobs:
   analyze:
