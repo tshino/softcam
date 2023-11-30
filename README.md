@@ -33,7 +33,7 @@ for (;;)
 
 Following software is required.
 
-- Visual Studio 2019 (installed with Desktop development with C++ and Windows 10 SDK)
+- Visual Studio 2022 (installed with Desktop development with C++ and Windows 10 SDK)
 
 Open `softcam.sln`, choose the configuration `Release` and the platform `x64`, and build the solution.
 

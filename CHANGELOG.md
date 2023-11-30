@@ -3,6 +3,13 @@
 All notable changes to the Softcam library will be documented in this file.
 
 ### [Unreleased]
+- Bumped NuGet package version of Google Test.
+- Changed the primary target compiler from Visual Studio 2019 to Visual Studio 2022. [#44](https://github.com/tshino/softcam/pull/44)
+    - Had set TargetName property explicitly instead of letting it to use default ($(ProjectName)) for each project to prevent output file names from changing even if project file names change.
+    - Duplicated all existing project files with _vs2019 suffix added to keep maintaining VS2019 support.
+        - For example, `softcam_vs2019.sln` can be used as same as the previous `softcam.sln`. All the output files keep the same name as before.
+    - Updated the GitHub Action workflow files to let them keep using the latest solution file (`softcam.sln`).
+    - Retargeted the all project files (except `*_vs2019`) to use VS2022 toolset.
 - Refactoring:
     - Named namespaces of each test code for better visualization. [#42](https://github.com/tshino/softcam/pull/42)
 

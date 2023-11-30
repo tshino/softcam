@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33027.164
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "python_binding", "python_binding_vs2019.vcxproj", "{EB799C59-D258-4360-B17A-4156AE659786}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB799C59-D258-4360-B17A-4156AE659786}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EB799C59-D258-4360-B17A-4156AE659786}.Debug|Win32.Build.0 = Debug|Win32
+		{EB799C59-D258-4360-B17A-4156AE659786}.Debug|x64.ActiveCfg = Debug|x64
+		{EB799C59-D258-4360-B17A-4156AE659786}.Debug|x64.Build.0 = Debug|x64
+		{EB799C59-D258-4360-B17A-4156AE659786}.Release|Win32.ActiveCfg = Release|Win32
+		{EB799C59-D258-4360-B17A-4156AE659786}.Release|Win32.Build.0 = Release|Win32
+		{EB799C59-D258-4360-B17A-4156AE659786}.Release|x64.ActiveCfg = Release|x64
+		{EB799C59-D258-4360-B17A-4156AE659786}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {90FA3AD4-5423-4CE6-8711-D0076ADC6906}
+	EndGlobalSection
+EndGlobal

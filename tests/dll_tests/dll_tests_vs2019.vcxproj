@@ -22,7 +22,7 @@
     <ProjectGuid>{bf2211be-932a-4e5d-aa41-42304fb243fa}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="raw_api_test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\softcam\softcam.vcxproj">
+    <ProjectReference Include="..\..\src\softcam\softcam_vs2019.vcxproj">
       <Project>{52968d29-aa5f-41a4-bf1e-4c50f1098373}</Project>
     </ProjectReference>
   </ItemGroup>
