@@ -11,7 +11,7 @@ All notable changes to the Softcam library will be documented in this file.
     - Updated the GitHub Action workflow files to let them keep using the latest solution file (`softcam.sln`).
     - Retargeted the all project files (except `*_vs2019`) to use VS2022 toolset.
 - Refactoring:
-    - Named namespaces of each test code for better visualization. [#42](https://github.com/tshino/softcam/pull/42)
+    - Named namespaces of each test code for better visualization on Visual Studio. [#42](https://github.com/tshino/softcam/pull/42)
 
 ### [1.6] - 2023-09-10
 - Fixed a deadlock issue. [#39](https://github.com/tshino/softcam/pull/39)
