@@ -42,6 +42,7 @@ The header and the import libraries will also be put into the `dist` directory.
 
 Note: The DLL `softcam.dll` built above is a 64-bit DLL file. In order to support 32-bit camera applications as well, you should build 32-bit `softcam.dll` too by choosing the platform `Win32`. The 32-bit DLL file will be put in the `dist/bin/Win32` directory.
 
+Note: You can use Visual Studio 2019 instead. The project files to use with Visual Studio 2019 have a name with the common suffix `_vs2019`. So your starting point is `softcam_vs2019.sln`.
 
 ## Demo
 
