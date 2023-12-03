@@ -2,6 +2,9 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
+### [Unreleased]
+- Updated solution file version from Visual Studio 2019 to Visual Studio 2022. [#45](https://github.com/tshino/softcam/pull/45)
+
 ### [1.7] - 2023-12-02
 - Bumped NuGet package version of Google Test.
 - Changed the primary target compiler from Visual Studio 2019 to Visual Studio 2022. [#44](https://github.com/tshino/softcam/pull/44)
