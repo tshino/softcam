@@ -34,11 +34,14 @@ public:
     float           framerate() const { return m_framerate; }
     void            releaseFrameBuffer();
 
+    const DefaultImage* getDefaultImage();
+
     // Testing purpose only
     static void     enableDefaultBlankImage(int width, int height);
     static void     disableDefaultBlankImage();
 
 private:
+    CCritSec    m_critsec;
     FrameBuffer m_frame_buffer;
     DefaultImage m_default_image;
     const bool  m_valid;
