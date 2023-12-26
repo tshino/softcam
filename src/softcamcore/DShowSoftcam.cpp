@@ -400,7 +400,7 @@ Softcam::releaseFrameBuffer()
 const DefaultImage*
 Softcam::getDefaultImage()
 {
-    CAutoLock lock(&m_cStateLock);
+    CAutoLock lock(&m_critsec);
     if (m_default_image)
     {
         return &m_default_image;
