@@ -1,5 +1,6 @@
 @echo off
 
+pushd %~dp0
 set INSTALLER=Win32\Release\softcam_installer.exe
 set TARGET=..\..\dist\bin\Win32\softcam.dll
 
@@ -20,4 +21,5 @@ if %ERRORLEVEL% == 0 (
   echo The process has been canceled or failed.
   echo.
 )
+popd
 pause
