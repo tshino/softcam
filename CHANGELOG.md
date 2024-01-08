@@ -4,6 +4,7 @@ All notable changes to the Softcam library will be documented in this file.
 
 ### [Unreleased]
 - Updated solution file version from Visual Studio 2019 to Visual Studio 2022. [#45](https://github.com/tshino/softcam/pull/45)
+- Added `pushd`/`popd` to example installer BAT files to work correctly even if launched from another directory. [#48](https://github.com/tshino/softcam/pull/48)
 
 ### [1.7] - 2023-12-02
 - Bumped NuGet package version of Google Test.
