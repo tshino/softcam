@@ -176,3 +176,8 @@ extern "C" bool     scWaitForConnection(scCamera camera, float timeout)
 {
     return softcam::sender::WaitForConnection(camera, timeout);
 }
+
+extern "C" bool     scIsConnected(scCamera camera)
+{
+	return softcam::sender::IsConnected(camera);
+}

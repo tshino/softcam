@@ -74,4 +74,14 @@ extern "C"
         this function returns `false`.
     */
     bool        SOFTCAM_API scWaitForConnection(scCamera camera, float timeout = 0.0f);
+
+    /*
+        This function reports if an application is connected to the specified
+        virtual camera.
+
+        This function returns `true` if the virtual camera has ever been
+        accessed by an application before this function returns. Otherwise,
+        this function returns `false`.
+    */
+	bool        SOFTCAM_API scIsConnected(scCamera camera);
 }
