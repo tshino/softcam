@@ -113,12 +113,12 @@ bool            WaitForConnection(CameraHandle camera, float timeout)
 
 bool            IsConnected(CameraHandle camera)
 {
-	Camera* target = static_cast<Camera*>(camera);
-	if (target && s_camera.load() == target)
-	{
-		return target->m_frame_buffer.connected();
-	}
-	return false;
+    Camera* target = static_cast<Camera*>(camera);
+    if (target && s_camera.load() == target)
+    {
+        return target->m_frame_buffer.connected();
+    }
+    return false;
 }
 
 } //namespace sender

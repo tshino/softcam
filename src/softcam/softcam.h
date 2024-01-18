@@ -83,5 +83,5 @@ extern "C"
         accessed by an application before this function returns. Otherwise,
         this function returns `false`.
     */
-	bool        SOFTCAM_API scIsConnected(scCamera camera);
+    bool        SOFTCAM_API scIsConnected(scCamera camera);
 }
