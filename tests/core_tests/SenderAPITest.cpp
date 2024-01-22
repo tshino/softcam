@@ -356,6 +356,19 @@ TEST(SenderIsConnected, ReturnsFalseIfNotConnectedEver)
     sender::DeleteCamera(handle);
 }
 
+TEST(SenderIsConnected, ReturnsTrueIfAlreadyConnected)
+{
+    auto handle = sender::CreateCamera(320, 240);
+
+    auto fb = sc::FrameBuffer::open();
+    ASSERT_TRUE( fb );
+
+    bool ret = sender::IsConnected(handle);
+
+    EXPECT_EQ( ret, true );
+    sender::DeleteCamera(handle);
+}
+
 // TODO: tests for IsConnected
 
 } //namespace SenderAPITest
