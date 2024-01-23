@@ -369,6 +369,19 @@ TEST(SenderIsConnected, ReturnsTrueIfAlreadyConnected)
     sender::DeleteCamera(handle);
 }
 
+TEST(SenderIsConnected, InvalidArgs)
+{
+    bool ret = sender::IsConnected(nullptr);
+    EXPECT_EQ( ret, false );
+
+    auto handle = sender::CreateCamera(320, 240);
+    sender::DeleteCamera(handle);
+
+    ret = sender::IsConnected(handle);
+    EXPECT_EQ( ret, false );
+}
+
+
 // TODO: tests for IsConnected
 
 } //namespace SenderAPITest
