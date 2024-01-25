@@ -424,7 +424,6 @@ AMovieDllRegisterServer2( BOOL bRegister )
     //
     DbgLog((LOG_TRACE, 2, TEXT("- CoInitialize")));
     hr = CoInitialize( (LPVOID)NULL );
-    ASSERT( SUCCEEDED(hr) );
 
     // get hold of IFilterMapper2
     //

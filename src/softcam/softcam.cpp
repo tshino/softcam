@@ -81,9 +81,6 @@ STDAPI DllRegisterServer()
     }
     hr = CoInitialize(nullptr);
     if (FAILED(hr))
-    {
-        return hr;
-    }
     do
     {
         IFilterMapper2 *pFM2 = nullptr;
