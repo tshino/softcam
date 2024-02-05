@@ -381,7 +381,4 @@ TEST(SenderIsConnected, InvalidArgs)
     EXPECT_EQ( ret, false );
 }
 
-
-// TODO: tests for IsConnected
-
 } //namespace SenderAPITest
