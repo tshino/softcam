@@ -116,3 +116,17 @@ def test_wait_for_connection_use_after_free():
     with pytest.raises(RuntimeError) as e:
         assert cam.wait_for_connection()
     assert e.value.args == ('the camera instance has been deleted',)
+
+
+def test_is_connected():
+    cam = softcam.camera(320, 240, 60)
+    assert cam.is_connected() == False
+    cam = None
+
+
+def test_is_connected_use_after_free():
+    cam = softcam.camera(320, 240, 60)
+    cam.delete()
+    with pytest.raises(RuntimeError) as e:
+        assert cam.is_connected()
+    assert e.value.args == ('the camera instance has been deleted',)

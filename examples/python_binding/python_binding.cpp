@@ -79,6 +79,16 @@ class Camera
         return scWaitForConnection(m_camera, timeout);
     }
 
+    bool IsConnected()
+    {
+        if (!m_camera)
+        {
+            throw std::runtime_error("the camera instance has been deleted");
+        }
+
+        return scIsConnected(m_camera);
+    }
+
  private:
     scCamera    m_camera{};
     int         m_width = 0;
@@ -109,6 +119,10 @@ PYBIND11_MODULE(softcam, m) {
             "wait_for_connection",
             &Camera::WaitForConnection,
             py::arg("timeout") = 0.0f
+        )
+        .def(
+            "is_connected",
+            &Camera::IsConnected
         )
     ;
 }
