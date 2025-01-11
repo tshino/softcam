@@ -25,10 +25,13 @@ def main():
     dt = 1/60
     cam = softcam.camera(320, 240, 60)
     draw_something = DrawSomething()
+    print('Softcam is now active.')
 
     # Here, you can wait for an application to connect to this camera.
+    print('Waiting for connection...')
     while not cam.wait_for_connection(timeout=1):
         pass
+    print('Connected.')
 
     while True:
         # draw something
