@@ -2,6 +2,9 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
+### [Unreleased]
+- Bumped Pybind11 version in the python_binding example
+
 ### [1.8] - 2024-02-08
 - Added `scIsConnected()` method to API to make application connection waiting more flexible by @jekyll2014. (thanks!) [#51](https://github.com/tshino/softcam/pull/51)
 - Added corresponding `is_connected()` method to the python_binding example.
