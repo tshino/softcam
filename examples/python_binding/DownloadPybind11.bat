@@ -3,7 +3,7 @@
 @REM This batch requires internet connection to download the Pybind11 archive.
 setlocal
 
-set PYBIND11_VER=2.10.3
+set PYBIND11_VER=2.13.6
 
 pushd %~dp0
 if not exist pybind11 (
