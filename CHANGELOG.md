@@ -2,7 +2,7 @@
 
 All notable changes to the Softcam library will be documented in this file.
 
-### [Unreleased]
+### [1.8.1] - 2025-03-21
 - Bumped Pybind11 version in the python_binding example. [#67](https://github.com/tshino/softcam/pull/67)
 
 ### [1.8] - 2024-02-08
