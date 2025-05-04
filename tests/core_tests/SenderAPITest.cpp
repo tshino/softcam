@@ -369,6 +369,21 @@ TEST(SenderIsConnected, ReturnsTrueIfAlreadyConnected)
     sender::DeleteCamera(handle);
 }
 
+TEST(SenderIsConnected, ReturnsFalseIfAlreadyDisconnected)
+{
+    auto handle = sender::CreateCamera(320, 240);
+
+    auto fb = sc::FrameBuffer::open();
+    SLEEP_MS(100);
+    fb.release();
+    SLEEP_MS(500 + 200); // enough time for receiver-watchdog timeout
+
+    bool ret = sender::IsConnected(handle);
+
+    EXPECT_EQ( ret, false );
+    sender::DeleteCamera(handle);
+}
+
 TEST(SenderIsConnected, InvalidArgs)
 {
     bool ret = sender::IsConnected(nullptr);

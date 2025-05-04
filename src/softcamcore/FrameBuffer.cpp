@@ -190,7 +190,7 @@ bool FrameBuffer::active() const
 bool FrameBuffer::connected() const
 {
     std::lock_guard<NamedMutex> lock(m_mutex);
-    return m_shmem && header()->m_connected;
+    return m_shmem && header()->m_connected && m_receiver_watchdog.alive();
 }
 
 void FrameBuffer::deactivate()

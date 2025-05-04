@@ -291,7 +291,7 @@ TEST(FrameBuffer, WaitForNewFrameStopsWhenDeactivated) {
     th.join();
 }
 
-TEST(FrameBuffer, WaitForNewFrameStopsWhenWatchdogTimeouts) {
+TEST(FrameBuffer, WaitForNewFrameStopsWhenSenderWatchdogTimeouts) {
     const float TEST_TIMEOUT = sc::FrameBuffer::WATCHDOG_TIMEOUT + 1.0f;
     auto fb = sc::FrameBuffer::create(320, 240, 60);
 
@@ -350,6 +350,17 @@ TEST(FrameBuffer, ReleaseOnReceiverDisconnects) {
     EXPECT_EQ( sender.height(), 240 );
     EXPECT_EQ( sender.framerate(), 60.0f );
     EXPECT_EQ( sender.active(), true );
+}
+
+TEST(FrameBuffer, SenderDetectsReceiversDisconnection) {
+    auto sender = sc::FrameBuffer::create(320, 240, 60);
+    auto receiver = sc::FrameBuffer::open();
+    EXPECT_TRUE( sender.connected() );
+    receiver.release();
+
+    sc::Timer::sleep(sc::FrameBuffer::WATCHDOG_TIMEOUT + 0.1f);
+
+    EXPECT_FALSE( sender.connected() );
 }
 
 } //namespace FrameBufferTest
