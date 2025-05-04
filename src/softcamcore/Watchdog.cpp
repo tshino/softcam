@@ -73,12 +73,12 @@ Watchdog Watchdog::createMonitor(
             if (last_value != value)
             {
                 last_value = value;
+                ptr->m_alive = true;
                 timer.reset();
             }
             if (timeout < timer.get())
             {
                 ptr->m_alive = false;
-                break;
             }
         }
     });

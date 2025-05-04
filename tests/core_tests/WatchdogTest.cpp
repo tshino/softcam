@@ -143,4 +143,28 @@ TEST(Watchdog, MonitorTimeouts)
     EXPECT_EQ( monitor.alive(), false );
 }
 
+TEST(Watchdog, MonitorDetectsRevival)
+{
+    const float HEARTBEAT_INTERVAL = 0.01f;
+    const float MONITOR_INTERVAL = 0.01f;
+    const float MONITOR_TIMEOUT = 0.20f;
+
+    std::atomic<unsigned>   signal = 0;
+
+    auto monitor = sc::Watchdog::createMonitor(
+                        MONITOR_INTERVAL,
+                        MONITOR_TIMEOUT,
+                        [&] { return signal.load(); });
+
+    SLEEP_S(MONITOR_TIMEOUT * 2);
+    EXPECT_EQ( monitor.alive(), false );
+
+    auto heartbeat = sc::Watchdog::createHeartbeat(
+                        HEARTBEAT_INTERVAL,
+                        [&] { ++signal; });
+
+    SLEEP_S(HEARTBEAT_INTERVAL * 2 + MONITOR_INTERVAL * 2);
+    EXPECT_EQ( monitor.alive(), true );
+}
+
 } //namespace WatchdogTest
