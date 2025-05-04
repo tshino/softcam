@@ -19,8 +19,8 @@ struct FrameBuffer::Header
     float       m_framerate;
     uint8_t     m_is_active;
     uint8_t     m_connected;
-    uint8_t     m_watchdog_heartbeat;
-    uint8_t     m_unused_field;
+    uint8_t     m_watchdog_sender_heartbeat;
+    uint8_t     m_watchdog_receiver_heartbeat;
     uint64_t    m_frame_counter;
 
     uint8_t*    imageData();
@@ -63,15 +63,25 @@ FrameBuffer FrameBuffer::create(
         frame->m_framerate = framerate;
         frame->m_is_active = 1;
         frame->m_connected = 0;
+        frame->m_watchdog_sender_heartbeat = 0;
+        frame->m_watchdog_receiver_heartbeat = 0;
         frame->m_frame_counter = 0;
 
         auto mutex = fb.m_mutex;
-        fb.m_watchdog = Watchdog::createHeartbeat(
+        fb.m_sender_watchdog = Watchdog::createHeartbeat(
             WATCHDOG_HEARTBEAT_INTERVAL,
             [mutex, frame]() mutable
             {
                 std::lock_guard<NamedMutex> lock(mutex);
-                frame->m_watchdog_heartbeat += 1;
+                frame->m_watchdog_sender_heartbeat += 1;
+            });
+        fb.m_receiver_watchdog = Watchdog::createMonitor(
+            WATCHDOG_MONITOR_INTERVAL,
+            WATCHDOG_TIMEOUT,
+            [mutex, frame]() mutable
+            {
+                std::lock_guard<NamedMutex> lock(mutex);
+                return frame->m_watchdog_receiver_heartbeat;
             });
     }
     return fb;
@@ -108,15 +118,23 @@ FrameBuffer FrameBuffer::open()
         }
 
         auto mutex = fb.m_mutex;
-        fb.m_watchdog = Watchdog::createMonitor(
+        fb.m_sender_watchdog = Watchdog::createMonitor(
             WATCHDOG_MONITOR_INTERVAL,
             WATCHDOG_TIMEOUT,
             [mutex, frame]() mutable
             {
                 std::lock_guard<NamedMutex> lock(mutex);
-                return frame->m_watchdog_heartbeat;
+                return frame->m_watchdog_sender_heartbeat;
+            });
+        fb.m_receiver_watchdog = Watchdog::createHeartbeat(
+            WATCHDOG_HEARTBEAT_INTERVAL,
+            [mutex, frame]() mutable
+            {
+                std::lock_guard<NamedMutex> lock(mutex);
+                frame->m_watchdog_receiver_heartbeat += 1;
             });
         frame->m_connected = 1;
+        frame->m_watchdog_receiver_heartbeat += 1;
     }
 
     return fb;
@@ -125,10 +143,12 @@ FrameBuffer FrameBuffer::open()
 FrameBuffer&
 FrameBuffer::operator =(const FrameBuffer& fb)
 {
-    m_watchdog = {};
+    m_receiver_watchdog = {};
+    m_sender_watchdog = {};
     m_shmem = {};
     m_shmem = fb.m_shmem;
-    m_watchdog = fb.m_watchdog;
+    m_sender_watchdog = fb.m_sender_watchdog;
+    m_receiver_watchdog = fb.m_receiver_watchdog;
     return *this;
 }
 
@@ -222,7 +242,7 @@ bool FrameBuffer::waitForNewFrame(uint64_t frame_counter, float time_out)
 {
     if (!m_shmem) return false;
     Timer timer;
-    while (active() && m_watchdog.alive())
+    while (active() && m_sender_watchdog.alive())
     {
         if (frameCounter() > frame_counter)
         {
@@ -239,7 +259,8 @@ bool FrameBuffer::waitForNewFrame(uint64_t frame_counter, float time_out)
 
 void FrameBuffer::release()
 {
-    m_watchdog.stop();
+    m_receiver_watchdog.stop();
+    m_sender_watchdog.stop();
     m_shmem = SharedMemory{};
 }
 
