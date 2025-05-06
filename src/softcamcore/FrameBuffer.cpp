@@ -9,6 +9,7 @@ namespace softcam {
 
 const char NamedMutexName[] = "DirectShow Softcam/NamedMutex";
 const char SharedMemoryName[] = "DirectShow Softcam/SharedMemory";
+const uint8_t ProtocolVersion = 2;
 
 
 struct FrameBuffer::Header
@@ -18,7 +19,7 @@ struct FrameBuffer::Header
     uint16_t    m_height;
     float       m_framerate;
     uint8_t     m_is_active;
-    uint8_t     m_connected;
+    uint8_t     m_connected_min_version; // 0 or 1 or 2
     uint8_t     m_watchdog_sender_heartbeat;
     uint8_t     m_watchdog_receiver_heartbeat;
     uint64_t    m_frame_counter;
@@ -62,7 +63,7 @@ FrameBuffer FrameBuffer::create(
         frame->m_height = (uint16_t)height;
         frame->m_framerate = framerate;
         frame->m_is_active = 1;
-        frame->m_connected = 0;
+        frame->m_connected_min_version = 0;
         frame->m_watchdog_sender_heartbeat = 0;
         frame->m_watchdog_receiver_heartbeat = 0;
         frame->m_frame_counter = 0;
@@ -133,7 +134,11 @@ FrameBuffer FrameBuffer::open()
                 std::lock_guard<NamedMutex> lock(mutex);
                 frame->m_watchdog_receiver_heartbeat += 1;
             });
-        frame->m_connected = 1;
+        if (0 == frame->m_connected_min_version ||
+            ProtocolVersion <= frame->m_connected_min_version)
+        {
+            frame->m_connected_min_version = ProtocolVersion;
+        }
         frame->m_watchdog_receiver_heartbeat += 1;
     }
 
@@ -190,7 +195,24 @@ bool FrameBuffer::active() const
 bool FrameBuffer::connected() const
 {
     std::lock_guard<NamedMutex> lock(m_mutex);
-    return m_shmem && header()->m_connected && m_receiver_watchdog.alive();
+    if (m_shmem)
+    {
+        auto ver = header()->m_connected_min_version;
+        if (0 == ver)
+        {
+            // No receivers connected
+            return false;
+        }
+        if (1 == ver)
+        {
+            // At least one of the connected receivers is version 1.
+            // Since receivers of version 1 don't have receiver-watchdog,
+            // we won't know their disconnection.
+            return true;
+        }
+        return m_receiver_watchdog.alive();
+    }
+    return false;
 }
 
 void FrameBuffer::deactivate()
