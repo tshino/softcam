@@ -51,7 +51,8 @@ class FrameBuffer
 
     mutable NamedMutex      m_mutex;
     SharedMemory            m_shmem;
-    Watchdog                m_watchdog;
+    Watchdog                m_sender_watchdog;
+    Watchdog                m_receiver_watchdog;
 
     explicit FrameBuffer(const char* mutex_name) : m_mutex(mutex_name) {}
 

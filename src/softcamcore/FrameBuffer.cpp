@@ -9,6 +9,7 @@ namespace softcam {
 
 const char NamedMutexName[] = "DirectShow Softcam/NamedMutex";
 const char SharedMemoryName[] = "DirectShow Softcam/SharedMemory";
+const uint8_t ProtocolVersion = 2;
 
 
 struct FrameBuffer::Header
@@ -18,9 +19,9 @@ struct FrameBuffer::Header
     uint16_t    m_height;
     float       m_framerate;
     uint8_t     m_is_active;
-    uint8_t     m_connected;
-    uint8_t     m_watchdog_heartbeat;
-    uint8_t     m_unused_field;
+    uint8_t     m_connected_min_version; // 0 or 1 or 2
+    uint8_t     m_watchdog_sender_heartbeat;
+    uint8_t     m_watchdog_receiver_heartbeat;
     uint64_t    m_frame_counter;
 
     uint8_t*    imageData();
@@ -62,16 +63,26 @@ FrameBuffer FrameBuffer::create(
         frame->m_height = (uint16_t)height;
         frame->m_framerate = framerate;
         frame->m_is_active = 1;
-        frame->m_connected = 0;
+        frame->m_connected_min_version = 0;
+        frame->m_watchdog_sender_heartbeat = 0;
+        frame->m_watchdog_receiver_heartbeat = 0;
         frame->m_frame_counter = 0;
 
         auto mutex = fb.m_mutex;
-        fb.m_watchdog = Watchdog::createHeartbeat(
+        fb.m_sender_watchdog = Watchdog::createHeartbeat(
             WATCHDOG_HEARTBEAT_INTERVAL,
             [mutex, frame]() mutable
             {
                 std::lock_guard<NamedMutex> lock(mutex);
-                frame->m_watchdog_heartbeat += 1;
+                frame->m_watchdog_sender_heartbeat += 1;
+            });
+        fb.m_receiver_watchdog = Watchdog::createMonitor(
+            WATCHDOG_MONITOR_INTERVAL,
+            WATCHDOG_TIMEOUT,
+            [mutex, frame]() mutable
+            {
+                std::lock_guard<NamedMutex> lock(mutex);
+                return frame->m_watchdog_receiver_heartbeat;
             });
     }
     return fb;
@@ -108,15 +119,27 @@ FrameBuffer FrameBuffer::open()
         }
 
         auto mutex = fb.m_mutex;
-        fb.m_watchdog = Watchdog::createMonitor(
+        fb.m_sender_watchdog = Watchdog::createMonitor(
             WATCHDOG_MONITOR_INTERVAL,
             WATCHDOG_TIMEOUT,
             [mutex, frame]() mutable
             {
                 std::lock_guard<NamedMutex> lock(mutex);
-                return frame->m_watchdog_heartbeat;
+                return frame->m_watchdog_sender_heartbeat;
             });
-        frame->m_connected = 1;
+        fb.m_receiver_watchdog = Watchdog::createHeartbeat(
+            WATCHDOG_HEARTBEAT_INTERVAL,
+            [mutex, frame]() mutable
+            {
+                std::lock_guard<NamedMutex> lock(mutex);
+                frame->m_watchdog_receiver_heartbeat += 1;
+            });
+        if (0 == frame->m_connected_min_version ||
+            ProtocolVersion <= frame->m_connected_min_version)
+        {
+            frame->m_connected_min_version = ProtocolVersion;
+        }
+        frame->m_watchdog_receiver_heartbeat += 1;
     }
 
     return fb;
@@ -125,10 +148,12 @@ FrameBuffer FrameBuffer::open()
 FrameBuffer&
 FrameBuffer::operator =(const FrameBuffer& fb)
 {
-    m_watchdog = {};
+    m_receiver_watchdog = {};
+    m_sender_watchdog = {};
     m_shmem = {};
     m_shmem = fb.m_shmem;
-    m_watchdog = fb.m_watchdog;
+    m_sender_watchdog = fb.m_sender_watchdog;
+    m_receiver_watchdog = fb.m_receiver_watchdog;
     return *this;
 }
 
@@ -170,7 +195,24 @@ bool FrameBuffer::active() const
 bool FrameBuffer::connected() const
 {
     std::lock_guard<NamedMutex> lock(m_mutex);
-    return m_shmem && header()->m_connected;
+    if (m_shmem)
+    {
+        auto ver = header()->m_connected_min_version;
+        if (0 == ver)
+        {
+            // No receivers connected
+            return false;
+        }
+        if (1 == ver)
+        {
+            // At least one of the connected receivers is version 1.
+            // Since receivers of version 1 don't have receiver-watchdog,
+            // we won't know their disconnection.
+            return true;
+        }
+        return m_receiver_watchdog.alive();
+    }
+    return false;
 }
 
 void FrameBuffer::deactivate()
@@ -222,7 +264,7 @@ bool FrameBuffer::waitForNewFrame(uint64_t frame_counter, float time_out)
 {
     if (!m_shmem) return false;
     Timer timer;
-    while (active() && m_watchdog.alive())
+    while (active() && m_sender_watchdog.alive())
     {
         if (frameCounter() > frame_counter)
         {
@@ -239,7 +281,8 @@ bool FrameBuffer::waitForNewFrame(uint64_t frame_counter, float time_out)
 
 void FrameBuffer::release()
 {
-    m_watchdog.stop();
+    m_receiver_watchdog.stop();
+    m_sender_watchdog.stop();
     m_shmem = SharedMemory{};
 }
 

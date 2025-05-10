@@ -69,9 +69,8 @@ extern "C"
         If the `timeout` argument is greater than 0, this function timeouts
         after the specified time if no application accesses the virtual camera.
 
-        This function returns `true` if the virtual camera has ever been
-        accessed by an application before this function returns. Otherwise,
-        this function returns `false`.
+        This function returns `true` if an application is connected to
+        the virtual camera. Otherwise, it returns `false`.
     */
     bool        SOFTCAM_API scWaitForConnection(scCamera camera, float timeout = 0.0f);
 
@@ -79,9 +78,8 @@ extern "C"
         This function reports if an application is connected to the specified
         virtual camera.
 
-        This function returns `true` if the virtual camera has ever been
-        accessed by an application before this function returns. Otherwise,
-        this function returns `false`.
+        This function returns `true` if an application is connected to
+        the virtual camera. Otherwise, it returns `false`.
     */
     bool        SOFTCAM_API scIsConnected(scCamera camera);
 }
