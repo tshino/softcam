@@ -4,7 +4,7 @@ All notable changes to the Softcam library will be documented in this file.
 
 ### [Unreleased]
 - **BREAKING CHANGES**
-    - Added disconnection detection mechanism, and now `scWaitForConnection()` and `scIsConnected()` can be used to detect both connection and disconnection. Previously, these functions returned true even if the connection was already lost.
+    - Added disconnection detection mechanism, and now `scWaitForConnection()` and `scIsConnected()` can be used to detect both connection and disconnection. Previously, these functions returned true forever after the first connection detection, even if the connection was already lost. [#70](https://github.com/tshino/softcam/pull/70)
 
 ### [1.8.1] - 2025-03-21
 - Bumped Pybind11 version in the python_binding example. [#67](https://github.com/tshino/softcam/pull/67)
