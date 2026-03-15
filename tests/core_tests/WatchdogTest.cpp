@@ -67,6 +67,39 @@ TEST(Watchdog, HeartbeatStops)
     EXPECT_EQ( heartbeat.alive(), false );
 }
 
+TEST(Watchdog, MultipleInstances)
+{
+    const float HEARTBEAT_INTERVAL = 0.01f;
+    std::atomic<unsigned> signal = 0;
+    auto heartbeat1 = sc::Watchdog::createHeartbeat(
+                        HEARTBEAT_INTERVAL,
+                        [&] { ++signal; });
+
+    sc::Watchdog heartbeat2 = heartbeat1;
+
+    EXPECT_EQ( heartbeat1.alive(), true );
+    EXPECT_EQ( heartbeat2.alive(), true );
+
+    heartbeat1.stop();
+    EXPECT_EQ( heartbeat1.alive(), false );
+    EXPECT_EQ( heartbeat2.alive(), true );
+
+    // Heartbeat should still be running because heartbeat2 holds a reference
+    unsigned value1 = signal.load();
+    SLEEP_S(HEARTBEAT_INTERVAL * 3);
+    unsigned value2 = signal.load();
+    EXPECT_GT( value2, value1 );
+
+    heartbeat2.stop();
+    EXPECT_EQ( heartbeat2.alive(), false );
+
+    // Now heartbeat should stop
+    unsigned value3 = signal.load();
+    SLEEP_S(HEARTBEAT_INTERVAL * 3);
+    unsigned value4 = signal.load();
+    EXPECT_EQ( value3, value4 );
+}
+
 TEST(Watchdog, MonitorStops)
 {
     auto monitor = sc::Watchdog::createMonitor(0.1f, 1.0f, [] { return 0; });
@@ -165,6 +198,24 @@ TEST(Watchdog, MonitorDetectsRevival)
 
     SLEEP_S(HEARTBEAT_INTERVAL * 2 + MONITOR_INTERVAL * 2);
     EXPECT_EQ( monitor.alive(), true );
+}
+
+TEST(Watchdog, StopDefaultConstructed)
+{
+    sc::Watchdog wd;
+    EXPECT_EQ( wd.alive(), false );
+    wd.stop();
+    EXPECT_EQ( wd.alive(), false );
+}
+
+TEST(Watchdog, StopTwice)
+{
+    auto heartbeat = sc::Watchdog::createHeartbeat(0.1f, [] {});
+    EXPECT_EQ( heartbeat.alive(), true );
+    heartbeat.stop();
+    EXPECT_EQ( heartbeat.alive(), false );
+    heartbeat.stop();
+    EXPECT_EQ( heartbeat.alive(), false );
 }
 
 } //namespace WatchdogTest
