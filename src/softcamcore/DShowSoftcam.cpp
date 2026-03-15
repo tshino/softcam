@@ -432,9 +432,27 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
                 }
                 {
                     // Darken the image to indicate that the source is inactive.
-                    for (std::size_t i = 0; i < size; i++)
+                    std::size_t i = 0;
+                    for (; i + 32 <= size; i += 32)
                     {
-                        pData[i] /= 4;
+                        uint64_t val[4];
+                        std::memcpy(val, pData + i, 32);
+                        val[0] = (val[0] >> 2) & 0x3F3F3F3F3F3F3F3Full;
+                        val[1] = (val[1] >> 2) & 0x3F3F3F3F3F3F3F3Full;
+                        val[2] = (val[2] >> 2) & 0x3F3F3F3F3F3F3F3Full;
+                        val[3] = (val[3] >> 2) & 0x3F3F3F3F3F3F3F3Full;
+                        std::memcpy(pData + i, val, 32);
+                    }
+                    for (; i + 8 <= size; i += 8)
+                    {
+                        uint64_t val;
+                        std::memcpy(&val, pData + i, 8);
+                        val = (val >> 2) & 0x3F3F3F3F3F3F3F3Full;
+                        std::memcpy(pData + i, &val, 8);
+                    }
+                    for (; i < size; i++)
+                    {
+                        pData[i] >>= 2;
                     }
                 }
                 std::memcpy(m_screenshot.get(), pData, size);
