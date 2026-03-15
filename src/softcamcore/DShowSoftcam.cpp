@@ -434,7 +434,7 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
                     // Darken the image to indicate that the source is inactive.
                     for (std::size_t i = 0; i < size; i++)
                     {
-                        pData[i] /= 4;
+                        pData[i] >>= 2;
                     }
                 }
                 std::memcpy(m_screenshot.get(), pData, size);
