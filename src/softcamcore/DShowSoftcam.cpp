@@ -1,79 +1,15 @@
 #include "DShowSoftcam.h"
 
 #include <cstring>
-#include <string>
 #include <algorithm>
-#include <cstdio>
 #include <cmath>
-#include <chrono>
-#include <ctime>
 
 
 namespace {
 
-//#define ENABLE_LOG
-//#define LOG_FILE_PATH "C:\\my_temp\\debug_log.txt"
-
-#if defined(ENABLE_LOG)
-
-FILE* logfile = nullptr;
-#define OPEN_LOGFILE() logfile = std::fopen(LOG_FILE_PATH, "a")
-#define CLOSE_LOGFILE() [&]{ \
-        if (logfile) std::fclose(logfile); \
-        logfile = nullptr; \
-    }()
-#define NOW() []{ \
-        auto tp = std::chrono::system_clock::now(); \
-        auto t = std::chrono::system_clock::to_time_t(tp); \
-        static char buff[128]; \
-        std::strftime(buff, sizeof(buff), "%H:%M:%S", std::localtime(&t)); \
-        return buff; \
-    }()
-std::string IID_TO_STR(REFIID riid)
-{
-    std::string s =
-            riid == IID_IPin                ? "IPin" :
-            riid == IID_IBaseFilter         ? "IBaseFilter" :
-            riid == IID_IAMovieSetup        ? "IAMovieSetup" :
-            riid == IID_IQualityControl     ? "IQualityControl" :
-            riid == IID_IAMStreamConfig     ? "IAMStreamConfig" :
-            riid == IID_IKsPropertySet      ? "IKsPropertySet" :
-            riid == IID_IAMFilterMiscFlags  ? "IAMFilterMiscFlags" :
-            riid == IID_IPersistPropertyBag ? "IPersistPropertyBag" :
-            riid == IID_IReferenceClock     ? "IReferenceClock" :
-            riid == IID_IMediaSeeking       ? "IMediaSeeking" :
-            riid == IID_IAMDeviceRemoval    ? "IAMDeviceRemoval" :
-            riid == IID_IAMOpenProgress     ? "IAMOpenProgress" :
-            riid == IID_IMediaPosition      ? "IMediaPosition" :
-            riid == IID_IMediaFilter        ? "IMediaFilter" :
-            riid == IID_IBasicVideo         ? "IBasicVideo" :
-            riid == IID_IBasicAudio         ? "IBasicAudio" :
-            riid == IID_IVideoWindow        ? "IVideoWindow" :
-            riid == IID_IUnknown            ? "IUnknown" :
-            [&]() -> std::string
-            {
-                char buff[128];
-                snprintf(buff, sizeof(buff),
-                    "{%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX}",
-                    riid.Data1, riid.Data2, riid.Data3,
-                    riid.Data4[0], riid.Data4[1], riid.Data4[2], riid.Data4[3],
-                    riid.Data4[4], riid.Data4[5], riid.Data4[6], riid.Data4[7]);
-                return buff;
-            }();
-    return s;
-}
-#define LOG(fmt, ...) [&,funcname=__func__]{ \
-        if (logfile) std::fprintf(logfile, "%s: %s " fmt, NOW(), funcname, __VA_ARGS__); \
-        std::printf("%s: %s " fmt, NOW(), funcname, __VA_ARGS__); \
-    }()
-
-#else // ENABLE_LOG
-
 #define OPEN_LOGFILE()
 #define CLOSE_LOGFILE()
 #define LOG(...)
-
-#endif // ENABLE_LOG
 
 
 AM_MEDIA_TYPE* allocateMediaType()
