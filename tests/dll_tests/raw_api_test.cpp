@@ -93,4 +93,46 @@ TEST(scDeleteCamera, IgnoresInvalidPointer) {
     scDeleteCamera(&x);
 }
 
+TEST(scWaitForConnection, ShouldTimeout) {
+    void* cam = scCreateCamera(320, 240, 60);
+    EXPECT_NE(cam, nullptr);
+
+    bool ret = scWaitForConnection(cam, 0.1f);
+    EXPECT_FALSE(ret);
+
+    scDeleteCamera(cam);
+}
+
+TEST(scWaitForConnection, InvalidArgs) {
+    bool ret;
+
+    ret = scWaitForConnection(nullptr, 0.0f);
+    EXPECT_FALSE(ret);
+
+    int dummy = 0;
+    ret = scWaitForConnection(&dummy, 0.0f);
+    EXPECT_FALSE(ret);
+}
+
+TEST(scIsConnected, Basic) {
+    void* cam = scCreateCamera(320, 240, 60);
+    EXPECT_NE(cam, nullptr);
+
+    bool ret = scIsConnected(cam);
+    EXPECT_FALSE(ret);
+
+    scDeleteCamera(cam);
+}
+
+TEST(scIsConnected, InvalidArgs) {
+    bool ret;
+
+    ret = scIsConnected(nullptr);
+    EXPECT_FALSE(ret);
+
+    int dummy = 0;
+    ret = scIsConnected(&dummy);
+    EXPECT_FALSE(ret);
+}
+
 } //namespace RawAPITest
