@@ -74,7 +74,7 @@ HINSTANCE LoadOLEAut32()
 {
     if (hlibOLEAut32 == 0) {
 
-	hlibOLEAut32 = LoadLibrary(szOle32Aut);
+	hlibOLEAut32 = LoadLibraryEx(szOle32Aut, NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
     }
 
     return hlibOLEAut32;

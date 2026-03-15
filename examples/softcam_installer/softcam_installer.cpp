@@ -20,7 +20,15 @@ std::string ToHex(long x)
 
 HMODULE LoadDLL(const std::string& path)
 {
-    HMODULE hmod = LoadLibraryA(path.c_str());
+    char fullPath[MAX_PATH];
+    DWORD length = GetFullPathNameA(path.c_str(), MAX_PATH, fullPath, NULL);
+    if (length == 0 || length >= MAX_PATH)
+    {
+        Message("Error: invalid DLL path");
+        std::exit(1);
+    }
+
+    HMODULE hmod = LoadLibraryExA(fullPath, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
     if (!hmod)
     {
         Message("Error: can't load DLL");
