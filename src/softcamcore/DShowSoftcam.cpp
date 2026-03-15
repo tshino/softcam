@@ -456,7 +456,6 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
         pms->SetTime((REFERENCE_TIME*)&start,(REFERENCE_TIME*)&m_sample_time);
     }
     pms->SetSyncPoint(TRUE);
-    //LOG("-> NOERROR\n");
     return NOERROR;
 }
 
@@ -469,7 +468,6 @@ STDMETHODIMP SoftcamStream::Notify(IBaseFilter * pSender, Quality q)
     if (q.Late > 0) {
         m_sample_time += q.Late;
     }
-    //LOG("-> NOERROR\n");
     return NOERROR;
 }
 
