@@ -1,11 +1,45 @@
 #include "Misc.h"
 
 #include <windows.h>
+#include <sddl.h>
 #include <cmath>
 #include <cassert>
 
 
 namespace softcam {
+
+
+namespace {
+
+class ScopedSecurityAttributes {
+public:
+    ScopedSecurityAttributes() {
+        m_sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+        m_sa.lpSecurityDescriptor = nullptr;
+        m_sa.bInheritHandle = FALSE;
+
+        // "D:(A;;GA;;;CU)" -> Allow Generic All to Current User
+        if (!ConvertStringSecurityDescriptorToSecurityDescriptorA(
+                "D:(A;;GA;;;CU)",
+                SDDL_REVISION_1,
+                &m_sa.lpSecurityDescriptor,
+                nullptr)) {
+            m_sa.lpSecurityDescriptor = nullptr;
+        }
+    }
+    ~ScopedSecurityAttributes() {
+        if (m_sa.lpSecurityDescriptor) {
+            LocalFree(m_sa.lpSecurityDescriptor);
+        }
+    }
+    LPSECURITY_ATTRIBUTES get() {
+        return m_sa.lpSecurityDescriptor ? &m_sa : nullptr;
+    }
+private:
+    SECURITY_ATTRIBUTES m_sa;
+};
+
+} // namespace
 
 
 Timer::Timer()
@@ -69,9 +103,11 @@ void Timer::sleep(float seconds)
 }
 
 
-NamedMutex::NamedMutex(const char* name) :
-    m_handle(CreateMutexA(nullptr, false, name), closeHandle)
+NamedMutex::NamedMutex(const char* name)
 {
+    ScopedSecurityAttributes sa;
+    m_handle.reset(CreateMutexA(sa.get(), false, name), closeHandle);
+
     assert( m_handle.get() != nullptr && "Creating a named mutex failed" );
 }
 
@@ -119,8 +155,9 @@ SharedMemory::open(const char* name)
 
 SharedMemory::SharedMemory(const char* name, unsigned long size)
 {
+    ScopedSecurityAttributes sa;
     m_handle.reset(
-        CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, size, name),
+        CreateFileMappingA(INVALID_HANDLE_VALUE, sa.get(), PAGE_READWRITE, 0, size, name),
         closeHandle);
     if (m_handle && GetLastError() != ERROR_ALREADY_EXISTS)
     {
